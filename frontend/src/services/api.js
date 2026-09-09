@@ -29,9 +29,13 @@ api.interceptors.response.use(
 
 // ── PUBLIC ───────────────────────────────────────────────────────
 
+// Site Settings
+export const getSettings = () => api.get('/settings');
+
 // Notices
 export const getNotices = (params) => api.get('/notices', { params });
 export const getNotice = (id) => api.get(`/notices/${id}`);
+export const getNoticeCategories = () => api.get('/notices/categories');
 
 // Segments
 export const getSegments = () => api.get('/segments');
@@ -66,6 +70,10 @@ export const adminMe = () => api.get('/auth/me');
 
 // Dashboard
 export const getDashboardStats = () => api.get('/dashboard/stats');
+
+// Admin Settings
+export const adminGetSettings = () => api.get('/admin/settings');
+export const adminUpdateSettings = (data) => api.post('/admin/settings', data);
 
 // Admin Notices
 export const adminGetNotices = (params) => api.get('/admin/notices', { params });
@@ -119,8 +127,6 @@ export const adminDeleteGallery = (id) => api.delete(`/admin/gallery/${id}`);
 // Admin Contact Messages
 export const adminGetMessages = () => api.get('/admin/contact');
 export const adminMarkMessageRead = (id) => api.put(`/admin/contact/${id}/read`);
-
-// Notice categories
-export const getNoticeCategories = () => api.get('/notices/categories');
+export const adminDeleteMessage = (id) => api.delete(`/admin/contact/${id}`);
 
 export default api;

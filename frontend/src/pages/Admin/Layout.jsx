@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   LayoutDashboard, Bell, Layers, ClipboardList, Calendar,
   Award, HelpCircle, Image, MessageSquare, LogOut, Zap,
-  Menu, X, User, ChevronRight, ExternalLink
+  Menu, X, User, ChevronRight, ExternalLink, Settings
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -21,6 +21,7 @@ const navItems = [
   { to: '/admin/faqs', label: 'FAQs', icon: <HelpCircle size={18} /> },
   { to: '/admin/gallery', label: 'Gallery', icon: <Image size={18} /> },
   { to: '/admin/messages', label: 'Messages', icon: <MessageSquare size={18} /> },
+  { to: '/admin/settings', label: 'Settings', icon: <Settings size={18} /> },
 ];
 
 function Sidebar({ open, setOpen }) {
@@ -68,7 +69,8 @@ function Sidebar({ open, setOpen }) {
             <div style={{
               fontFamily: 'var(--font-heading)', fontWeight: 800,
               fontSize: '0.95rem', color: 'var(--color-primary)',
-            }}>FastRobox</div>
+              letterSpacing: '-0.02em',
+            }}>FASTROBOX</div>
             <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Admin Panel
             </div>
@@ -201,7 +203,7 @@ export default function AdminLayout() {
           </button>
           <div style={{ flex: 1 }} />
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            FastRobox 1.0 Admin Portal
+            FASTROBOX 1.0 Admin Portal
           </div>
         </div>
 

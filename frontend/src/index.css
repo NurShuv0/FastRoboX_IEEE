@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap');
 
 @import "tailwindcss";
 
@@ -36,9 +36,9 @@
   --gradient-card: linear-gradient(145deg, rgba(16,28,16,0.9) 0%, rgba(10,15,10,0.95) 100%);
   --gradient-hero: radial-gradient(ellipse at 50% 0%, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
 
-  --font-heading: 'Orbitron', monospace;
+  --font-heading: 'Manrope', 'DM Sans', sans-serif;
   --font-body: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-mono: 'DM Sans', sans-serif;
 
   --radius-sm: 6px;
   --radius-md: 12px;
@@ -129,9 +129,9 @@ body {
    ================================================================ */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .font-display { font-family: var(--font-heading); }
@@ -981,3 +981,248 @@ textarea.form-input { resize: vertical; min-height: 120px; }
 /* Custom scrollbar for light mode */
 [data-theme="light"] ::-webkit-scrollbar-track { background: #f0fdf4; }
 [data-theme="light"] ::-webkit-scrollbar-thumb { background: #16a34a; }
+
+/* ================================================================
+   SEGMENT COMPETITION CARDS
+   ================================================================ */
+.segment-icon-box {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  transition: all var(--transition-base);
+}
+
+.segment-card:hover .segment-icon-box {
+  background: rgba(34, 197, 94, 0.18);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+}
+
+/* ================================================================
+   CONTACT PAGE
+   ================================================================ */
+.contact-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  background: rgba(34, 197, 94, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+.contact-info-item:hover {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.07);
+}
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   RULEBOOK PAGE
+   ================================================================ */
+.rulebook-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  transition: all var(--transition-fast);
+  text-align: left;
+  width: 100%;
+  background: none;
+}
+.rulebook-nav-item:hover {
+  background: rgba(34, 197, 94, 0.06);
+  color: var(--color-primary);
+}
+.rulebook-nav-item.active {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--color-primary);
+  border-color: rgba(34, 197, 94, 0.2);
+  font-weight: 600;
+}
+
+.rulebook-section {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.rulebook-section:last-child { border-bottom: none; }
+.rulebook-section h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rulebook-rule-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rulebook-rule-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  padding: 8px 12px;
+  background: rgba(34, 197, 94, 0.03);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid rgba(34, 197, 94, 0.2);
+}
+.rulebook-rule-list li::before {
+  content: '▹';
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* Prize cards */
+.prize-card {
+  text-align: center;
+  padding: 20px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--gradient-card);
+  transition: all var(--transition-base);
+}
+.prize-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+  transform: translateY(-4px);
+}
+.prize-card.champion {
+  border-color: rgba(234, 179, 8, 0.4);
+  background: linear-gradient(145deg, rgba(234,179,8,0.06) 0%, var(--bg-card) 100%);
+}
+
+/* Spec table */
+.spec-table {
+  width: 100%;
+  font-size: 0.875rem;
+}
+.spec-table tr:nth-child(even) td {
+  background: rgba(34, 197, 94, 0.03);
+}
+.spec-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(34, 197, 94, 0.08);
+  vertical-align: top;
+}
+.spec-table td:first-child {
+  font-weight: 600;
+  color: var(--text-secondary);
+  width: 40%;
+  white-space: nowrap;
+}
+
+/* TBA badge */
+.badge-tba {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(234, 179, 8, 0.12);
+  color: #eab308;
+  border: 1px solid rgba(234, 179, 8, 0.25);
+}
+
+/* ================================================================
+   SETTINGS TABS
+   ================================================================ */
+.settings-tab {
+  padding: 8px 18px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+.settings-tab:hover {
+  background: rgba(34, 197, 94, 0.06);
+  color: var(--color-primary);
+}
+.settings-tab.active {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--color-primary);
+  border-color: rgba(34, 197, 94, 0.2);
+  font-weight: 600;
+}
+
+/* ================================================================
+   REGISTRATION CLOSED BANNER
+   ================================================================ */
+.registration-closed-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius-lg);
+  color: #f87171;
+}
+
+/* ================================================================
+   NOT FOUND PAGE
+   ================================================================ */
+.not-found-container {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  gap: 1.5rem;
+}
+
+/* ================================================================
+   TRACK PILL (Poster tracks)
+   ================================================================ */
+.track-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: rgba(34, 197, 94, 0.08);
+  color: var(--color-primary);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}

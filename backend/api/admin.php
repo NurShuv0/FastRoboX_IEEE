@@ -86,8 +86,8 @@ function handleAdmin(string $method, string $resource, string $id, string $actio
                 $f = array_map('sanitize', $_POST);
                 $img  = uploadFile('image', 'segments', ALLOWED_IMAGE_TYPES);
                 $rb   = uploadFile('rulebook', 'rulebooks', ALLOWED_PDF_TYPES);
-                $stmt = $db->prepare('INSERT INTO segments (name, slug, short_description, full_description, rules, eligibility, min_team_size, max_team_size, registration_fee, prize_pool, contact_email, contact_phone, is_active, display_order, image_path, rulebook_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-                $stmt->execute([$f['name'], $f['slug'] ?: strtolower(preg_replace('/[^a-z0-9]+/i', '-', $f['name'])), $f['short_description'], $f['full_description'] ?? '', $f['rules'] ?? '', $f['eligibility'] ?? '', (int)($f['min_team_size'] ?? 1), (int)($f['max_team_size'] ?? 5), (float)($f['registration_fee'] ?? 0), $f['prize_pool'] ?? '', $f['contact_email'] ?? '', $f['contact_phone'] ?? '', (int)($f['is_active'] ?? 1), (int)($f['display_order'] ?? 0), $img, $rb]);
+                $stmt = $db->prepare('INSERT INTO segments (name, slug, short_description, full_description, rules, eligibility, min_team_size, max_team_size, registration_fee, fee_additional, fee_note, prize_pool, prize_details, is_active, display_order, image_path, rulebook_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                $stmt->execute([$f['name'], $f['slug'] ?: strtolower(preg_replace('/[^a-z0-9]+/i', '-', $f['name'])), $f['short_description'], $f['full_description'] ?? '', $f['rules'] ?? '', $f['eligibility'] ?? '', (int)($f['min_team_size'] ?? 1), (int)($f['max_team_size'] ?? 5), (float)($f['registration_fee'] ?? 0), (float)($f['fee_additional'] ?? 0), $f['fee_note'] ?? '', $f['prize_pool'] ?? '', $f['prize_details'] ?? '', (int)($f['is_active'] ?? 1), (int)($f['display_order'] ?? 0), $img, $rb]);
                 success(['id' => $db->lastInsertId()], 'Segment created.', 201);
             }
             elseif ($method === 'POST' && !empty($id)) {
@@ -98,8 +98,8 @@ function handleAdmin(string $method, string $resource, string $id, string $actio
                 $newRb  = uploadFile('rulebook', 'rulebooks', ALLOWED_PDF_TYPES);
                 if ($newImg) { if ($img) deleteFile('segments', $img); $img = $newImg; }
                 if ($newRb)  { if ($rb)  deleteFile('rulebooks', $rb);  $rb  = $newRb; }
-                $stmt = $db->prepare('UPDATE segments SET name=?, slug=?, short_description=?, full_description=?, rules=?, eligibility=?, min_team_size=?, max_team_size=?, registration_fee=?, prize_pool=?, contact_email=?, contact_phone=?, is_active=?, display_order=?, image_path=?, rulebook_path=?, updated_at=NOW() WHERE id=?');
-                $stmt->execute([$f['name'], $f['slug'], $f['short_description'], $f['full_description'] ?? '', $f['rules'] ?? '', $f['eligibility'] ?? '', (int)($f['min_team_size'] ?? 1), (int)($f['max_team_size'] ?? 5), (float)($f['registration_fee'] ?? 0), $f['prize_pool'] ?? '', $f['contact_email'] ?? '', $f['contact_phone'] ?? '', (int)($f['is_active'] ?? 1), (int)($f['display_order'] ?? 0), $img, $rb, $id]);
+                $stmt = $db->prepare('UPDATE segments SET name=?, slug=?, short_description=?, full_description=?, rules=?, eligibility=?, min_team_size=?, max_team_size=?, registration_fee=?, fee_additional=?, fee_note=?, prize_pool=?, prize_details=?, is_active=?, display_order=?, image_path=?, rulebook_path=?, updated_at=NOW() WHERE id=?');
+                $stmt->execute([$f['name'], $f['slug'], $f['short_description'], $f['full_description'] ?? '', $f['rules'] ?? '', $f['eligibility'] ?? '', (int)($f['min_team_size'] ?? 1), (int)($f['max_team_size'] ?? 5), (float)($f['registration_fee'] ?? 0), (float)($f['fee_additional'] ?? 0), $f['fee_note'] ?? '', $f['prize_pool'] ?? '', $f['prize_details'] ?? '', (int)($f['is_active'] ?? 1), (int)($f['display_order'] ?? 0), $img, $rb, $id]);
                 success(null, 'Segment updated.');
             }
             elseif ($method === 'DELETE' && !empty($id)) {
@@ -257,6 +257,11 @@ function handleAdmin(string $method, string $resource, string $id, string $actio
                 $db->prepare('UPDATE contact_messages SET is_read = 1 WHERE id = ?')->execute([$id]);
                 success(null, 'Marked as read.');
             }
+            break;
+
+        // ── SETTINGS ─────────────────────────────────────────────
+        case 'settings':
+            handleAdminSettings($method);
             break;
 
         default:

@@ -5,15 +5,17 @@ import { useTheme } from '../../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
+  { label: 'Home', to: '/' },
   { label: 'Notice', to: '/notice' },
-  { label: 'Segments', to: '/#segments' },
+  { label: 'Segments', to: '/segments' },
+  { label: 'Rulebook', to: '/rulebook' },
   { label: 'Timeline', to: '/timeline' },
-  { label: 'Sponsors', to: '/#sponsors' },
   { label: 'FAQ', to: '/faq' },
+  { label: 'Contact', to: '/contact' },
 ];
 
 export default function Navbar() {
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -28,16 +30,21 @@ export default function Navbar() {
     setMenuOpen(false);
   }, [location]);
 
-  const handleHashLink = (e, to) => {
-    if (to.startsWith('/#')) {
-      e.preventDefault();
-      const id = to.slice(2);
-      if (location.pathname === '/') {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.location.href = to;
+  // Close menu on outside click
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handler = (e) => {
+      if (!e.target.closest('nav') && !e.target.closest('#mobile-menu')) {
+        setMenuOpen(false);
       }
-    }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [menuOpen]);
+
+  const isActive = (to) => {
+    if (to === '/') return location.pathname === '/';
+    return location.pathname.startsWith(to);
   };
 
   return (
@@ -54,9 +61,7 @@ export default function Navbar() {
           alignItems: 'center',
           padding: '0 24px',
           transition: 'all 0.3s ease',
-          background: scrolled
-            ? 'var(--bg-glass)'
-            : 'transparent',
+          background: scrolled ? 'var(--bg-glass)' : 'transparent',
           backdropFilter: scrolled ? 'blur(20px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
           borderBottom: scrolled ? '1px solid var(--border-color)' : '1px solid transparent',
@@ -64,7 +69,7 @@ export default function Navbar() {
         }}
       >
         <div style={{
-          maxWidth: 1200,
+          maxWidth: 1280,
           width: '100%',
           margin: '0 auto',
           display: 'flex',
@@ -74,13 +79,13 @@ export default function Navbar() {
         }}>
 
           {/* Logo */}
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             <div style={{
               width: 40, height: 40,
               background: 'var(--gradient-primary)',
               borderRadius: 10,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 15px rgba(34,197,94,0.4)',
+              boxShadow: '0 0 15px rgba(34,197,94,0.35)',
             }}>
               <Zap size={22} color="#052e16" strokeWidth={2.5} />
             </div>
@@ -88,56 +93,63 @@ export default function Navbar() {
               <div style={{
                 fontFamily: 'var(--font-heading)',
                 fontWeight: 800,
-                fontSize: '1.1rem',
+                fontSize: '1.05rem',
                 background: 'var(--gradient-primary)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
                 lineHeight: 1.1,
-              }}>FastRobox</div>
-              <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', letterSpacing: '0.12em', textTransform: 'uppercase', lineHeight: 1 }}>1.0 &bull; BUBT</div>
+                letterSpacing: '-0.02em',
+              }}>FASTROBOX</div>
+              <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', letterSpacing: '0.14em', textTransform: 'uppercase', lineHeight: 1 }}>1.0 &bull; IEEE BUBT</div>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, justifyContent: 'center' }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1, justifyContent: 'center' }}
                className="desktop-nav">
             {navLinks.map(link => (
-              <a
+              <NavLink
                 key={link.label}
-                href={link.to}
-                onClick={e => handleHashLink(e, link.to)}
-                style={{
-                  padding: '6px 14px',
+                to={link.to}
+                style={({ isActive: navIsActive }) => ({
+                  padding: '6px 12px',
                   borderRadius: 8,
-                  fontSize: '0.875rem',
-                  fontWeight: 500,
+                  fontSize: '0.85rem',
+                  fontWeight: navIsActive ? 600 : 500,
                   textDecoration: 'none',
-                  color: 'var(--text-secondary)',
+                  color: navIsActive ? 'var(--color-primary)' : 'var(--text-secondary)',
+                  background: navIsActive ? 'rgba(34,197,94,0.08)' : 'transparent',
                   transition: 'all 0.2s ease',
                   letterSpacing: '0.01em',
-                }}
+                  border: navIsActive ? '1px solid rgba(34,197,94,0.15)' : '1px solid transparent',
+                })}
                 onMouseEnter={e => {
-                  e.currentTarget.style.color = 'var(--color-primary)';
-                  e.currentTarget.style.background = 'rgba(34,197,94,0.08)';
+                  if (!isActive(link.to)) {
+                    e.currentTarget.style.color = 'var(--color-primary)';
+                    e.currentTarget.style.background = 'rgba(34,197,94,0.06)';
+                  }
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.color = 'var(--text-secondary)';
-                  e.currentTarget.style.background = 'transparent';
+                  if (!isActive(link.to)) {
+                    e.currentTarget.style.color = 'var(--text-secondary)';
+                    e.currentTarget.style.background = 'transparent';
+                  }
                 }}
               >
                 {link.label}
-              </a>
+              </NavLink>
             ))}
           </div>
 
           {/* Right Side */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
+              id="theme-toggle-btn"
               style={{
-                width: 38, height: 38,
+                width: 36, height: 36,
                 borderRadius: 10,
                 border: '1px solid var(--border-color)',
                 background: 'var(--bg-card)',
@@ -156,24 +168,28 @@ export default function Navbar() {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              {isDark ? <Sun size={17} /> : <Moon size={17} />}
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
             {/* Register Button */}
             <Link
               to="/register"
+              id="nav-register-btn"
               className="btn btn-primary"
-              style={{ fontSize: '0.875rem', padding: '8px 20px' }}
+              style={{ fontSize: '0.82rem', padding: '7px 18px' }}
             >
               Register
             </Link>
 
             {/* Hamburger */}
             <button
-              onClick={() => setMenuOpen(!menuOpen)}
+              id="hamburger-btn"
+              onClick={() => setMenuOpen(v => !v)}
+              aria-label="Toggle menu"
+              aria-expanded={menuOpen}
               style={{
                 display: 'none',
-                width: 38, height: 38,
+                width: 36, height: 36,
                 borderRadius: 10,
                 border: '1px solid var(--border-color)',
                 background: 'var(--bg-card)',
@@ -181,7 +197,6 @@ export default function Navbar() {
                 alignItems: 'center', justifyContent: 'center',
                 color: 'var(--text-primary)',
               }}
-              id="hamburger-btn"
             >
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -193,9 +208,10 @@ export default function Navbar() {
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            id="mobile-menu"
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
             style={{
               position: 'fixed',
@@ -204,48 +220,39 @@ export default function Navbar() {
               right: 0,
               zIndex: 999,
               background: 'var(--bg-glass)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
               borderBottom: '1px solid var(--border-color)',
-              padding: '16px 24px 20px',
+              padding: '12px 20px 20px',
               display: 'flex',
               flexDirection: 'column',
-              gap: 4,
+              gap: 2,
             }}
           >
             {navLinks.map(link => (
-              <a
+              <NavLink
                 key={link.label}
-                href={link.to}
-                onClick={e => { handleHashLink(e, link.to); setMenuOpen(false); }}
-                style={{
+                to={link.to}
+                onClick={() => setMenuOpen(false)}
+                style={({ isActive: navIsActive }) => ({
                   padding: '12px 16px',
                   borderRadius: 10,
-                  fontSize: '1rem',
-                  fontWeight: 500,
+                  fontSize: '0.975rem',
+                  fontWeight: navIsActive ? 600 : 500,
                   textDecoration: 'none',
-                  color: 'var(--text-secondary)',
-                  transition: 'all 0.2s ease',
-                  border: '1px solid transparent',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = 'var(--color-primary)';
-                  e.currentTarget.style.background = 'rgba(34,197,94,0.08)';
-                  e.currentTarget.style.borderColor = 'rgba(34,197,94,0.2)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.color = 'var(--text-secondary)';
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderColor = 'transparent';
-                }}
+                  color: navIsActive ? 'var(--color-primary)' : 'var(--text-secondary)',
+                  background: navIsActive ? 'rgba(34,197,94,0.08)' : 'transparent',
+                  border: navIsActive ? '1px solid rgba(34,197,94,0.15)' : '1px solid transparent',
+                  transition: 'all 0.15s ease',
+                })}
               >
                 {link.label}
-              </a>
+              </NavLink>
             ))}
             <Link
               to="/register"
               className="btn btn-primary"
-              style={{ marginTop: 8, justifyContent: 'center' }}
+              style={{ marginTop: 10, justifyContent: 'center' }}
               onClick={() => setMenuOpen(false)}
             >
               Register Now
@@ -255,9 +262,10 @@ export default function Navbar() {
       </AnimatePresence>
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .desktop-nav { display: none !important; }
           #hamburger-btn { display: flex !important; }
+          #nav-register-btn { display: none !important; }
         }
       `}</style>
     </>

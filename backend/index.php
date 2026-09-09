@@ -23,22 +23,17 @@ if ($resource !== 'api') {
     error('Not found.', 404);
 }
 
-// Load all API files
-require_once __DIR__ . '/api/auth.php';
-require_once __DIR__ . '/api/notices.php';
-require_once __DIR__ . '/api/segments.php';
-require_once __DIR__ . '/api/registrations.php';
-require_once __DIR__ . '/api/timeline.php'; // also defines sponsors, faqs, gallery, contact
-
 switch ($sub1) {
 
     // ── AUTH ──────────────────────────────────────────────────────
     case 'auth':
+        require_once __DIR__ . '/api/auth.php';
         handleAuth($method, $sub2);
         break;
 
     // ── NOTICES (public) ─────────────────────────────────────────
     case 'notices':
+        require_once __DIR__ . '/api/notices.php';
         if ($sub2 === 'categories') {
             handleNoticeCategories();
         } else {
@@ -48,11 +43,13 @@ switch ($sub1) {
 
     // ── SEGMENTS (public) ────────────────────────────────────────
     case 'segments':
+        require_once __DIR__ . '/api/segments.php';
         handleSegments($method, $sub2);
         break;
 
     // ── REGISTRATIONS ────────────────────────────────────────────
     case 'registrations':
+        require_once __DIR__ . '/api/registrations.php';
         if ($sub2 === 'status') {
             handleRegistrationStatus();
         } else {
@@ -90,12 +87,19 @@ switch ($sub1) {
         handleContact($method, $sub2);
         break;
 
+    // ── SETTINGS (public read) ───────────────────────────────────
+    case 'settings':
+        require_once __DIR__ . '/api/settings.php';
+        handleSettings($method, $sub2);
+        break;
+
     // ── ADMIN (protected routes) ─────────────────────────────────
     case 'admin':
-        $adminRoute  = $sub2;   // notices, segments, registrations, timeline, sponsors, faqs, gallery
+        $adminRoute  = $sub2;
         $adminId     = $segments[3] ?? '';
         $adminAction = $segments[4] ?? '';
         require_once __DIR__ . '/api/admin.php';
+        require_once __DIR__ . '/api/settings.php';
         handleAdmin($method, $adminRoute, $adminId, $adminAction);
         break;
 
