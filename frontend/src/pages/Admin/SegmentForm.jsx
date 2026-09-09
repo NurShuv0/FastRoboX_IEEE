@@ -20,7 +20,8 @@ export default function SegmentForm() {
   const [form, setForm] = useState({
     name: '', slug: '', short_description: '', full_description: '',
     rules: '', eligibility: '', min_team_size: 1, max_team_size: 5,
-    registration_fee: 0, prize_pool: '', contact_email: '', contact_phone: '',
+    registration_fee: 0, fee_additional: 0, fee_note: '',
+    prize_pool: '', prize_details: '', google_form_url: '',
     is_active: 1, display_order: 0,
   });
 
@@ -31,7 +32,7 @@ export default function SegmentForm() {
   useEffect(() => {
     if (isEdit) {
       adminGetSegment(id)
-        .then(r => { const d = r.data.data; setForm({ name: d.name, slug: d.slug, short_description: d.short_description, full_description: d.full_description || '', rules: d.rules || '', eligibility: d.eligibility || '', min_team_size: d.min_team_size, max_team_size: d.max_team_size, registration_fee: d.registration_fee, prize_pool: d.prize_pool || '', contact_email: d.contact_email || '', contact_phone: d.contact_phone || '', is_active: d.is_active, display_order: d.display_order }); })
+        .then(r => { const d = r.data.data; setForm({ name: d.name, slug: d.slug, short_description: d.short_description, full_description: d.full_description || '', rules: d.rules || '', eligibility: d.eligibility || '', min_team_size: d.min_team_size, max_team_size: d.max_team_size, registration_fee: d.registration_fee, fee_additional: d.fee_additional || 0, fee_note: d.fee_note || '', prize_pool: d.prize_pool || '', prize_details: d.prize_details || '', google_form_url: d.google_form_url || '', is_active: d.is_active, display_order: d.display_order }); })
         .catch(() => toast.error('Failed to load segment.'))
         .finally(() => setLoading(false));
     }
@@ -97,13 +98,13 @@ export default function SegmentForm() {
           <Input label="Min Team Size" type="number" min={1} value={form.min_team_size} onChange={e => set('min_team_size', e.target.value)} />
           <Input label="Max Team Size" type="number" min={1} value={form.max_team_size} onChange={e => set('max_team_size', e.target.value)} />
           <Input label="Registration Fee (৳)" type="number" min={0} step="0.01" value={form.registration_fee} onChange={e => set('registration_fee', e.target.value)} />
+          <Input label="Additional Member Fee (৳)" type="number" min={0} step="0.01" value={form.fee_additional} onChange={e => set('fee_additional', e.target.value)} />
           <Input label="Display Order" type="number" min={0} value={form.display_order} onChange={e => set('display_order', e.target.value)} />
         </div>
-        <Input label="Prize Pool" value={form.prize_pool} onChange={e => set('prize_pool', e.target.value)} placeholder="e.g., 1st: ৳30,000 | 2nd: ৳15,000" />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <Input label="Contact Email" type="email" value={form.contact_email} onChange={e => set('contact_email', e.target.value)} />
-          <Input label="Contact Phone" value={form.contact_phone} onChange={e => set('contact_phone', e.target.value)} />
-        </div>
+        <Input label="Fee Note" value={form.fee_note} onChange={e => set('fee_note', e.target.value)} placeholder="e.g., BDT 3,000 per team (Up to 4 Students + 1 Mentor)" />
+        <Input label="Prize Pool" value={form.prize_pool} onChange={e => set('prize_pool', e.target.value)} placeholder="e.g., BDT 30,000 total" />
+        <Input label="Prize Details" value={form.prize_details} onChange={e => set('prize_details', e.target.value)} placeholder="e.g., Champion: ৳15,000 | 1st Runner-up: ৳10,000" />
+        <Input label="Google Form URL (External Registration)" type="url" value={form.google_form_url} onChange={e => set('google_form_url', e.target.value)} placeholder="https://forms.gle/..." />
         <Select label="Status" value={form.is_active} onChange={e => set('is_active', Number(e.target.value))}>
           <option value={1}>Active</option>
           <option value={0}>Inactive</option>

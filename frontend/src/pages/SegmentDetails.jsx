@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, Users, Trophy, FileText,
-  Download, CheckCircle, BookOpen, AlertCircle,
+  Download, BookOpen,
   Calendar, Zap, ChevronRight, Cpu
 } from 'lucide-react';
 import { getSegment } from '../services/api';
@@ -92,7 +92,7 @@ export default function SegmentDetails() {
 
   const icon = SEGMENT_ICONS[seg.slug] || <Cpu size={36} />;
   const bannerColor = SEGMENT_BANNER_COLORS[seg.slug] || 'rgba(34,197,94,0.12)';
-  const isTBAPrize = seg.prize_pool === 'To Be Announced';
+  const isTBAPrize = !seg.prize_pool || seg.prize_pool === 'To Be Announced';
 
   const tabs = [
     { key: 'overview', label: 'Overview' },
@@ -214,24 +214,6 @@ export default function SegmentDetails() {
                 <p style={{ color: 'var(--text-secondary)', lineHeight: 1.9, fontSize: '0.925rem', whiteSpace: 'pre-line' }}>
                   {seg.full_description || seg.short_description}
                 </p>
-
-                {/* Prize breakdown */}
-                {isTBAPrize ? (
-                  <div style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px', background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', borderRadius: 10 }}>
-                    <AlertCircle size={16} style={{ color: '#eab308', flexShrink: 0 }} />
-                    <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                      <strong style={{ color: '#eab308' }}>Prize Pool — To Be Announced</strong><br />
-                      Prize amounts for this competition will be announced soon.
-                    </div>
-                  </div>
-                ) : seg.prize_details ? (
-                  <div style={{ marginTop: '1.5rem' }}>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-primary)', marginBottom: '0.75rem' }}>
-                      Prize Breakdown
-                    </div>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{seg.prize_details}</p>
-                  </div>
-                ) : null}
               </div>
             )}
 

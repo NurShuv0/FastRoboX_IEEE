@@ -1,104 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  BookOpen, ChevronRight, AlertCircle, Download, Trophy,
+  BookOpen, ChevronRight, AlertCircle, Download, FileText,
   Cpu, Wifi, Target, Users, Scale, Clock, Flag, Zap,
-  CheckCircle, XCircle
 } from 'lucide-react';
-import { SectionHeader } from '../components/UI/index.jsx';
+import { SectionHeader, Loader } from '../components/UI/index.jsx';
+import { getSegments } from '../services/api';
 
-const COMPETITIONS = [
-  {
-    id: 'project-showcase',
-    name: 'Project Showcasing',
-    tagline: 'Junior & Senior Categories',
-    team: '1–4 members (+৳500/extra)',
-    fee: '৳2,000',
-    prize: '৳30,000 total',
-    prizeDetails: [
-      { place: '🥇 Champion', amount: '৳15,000', color: '#eab308' },
-      { place: '🥈 1st Runner-up', amount: '৳10,000', color: '#94a3b8' },
-      { place: '🥉 2nd Runner-up', amount: '৳5,000', color: '#b45309' },
-    ],
-    isTBA: false,
-    sections: [
-      {
-        title: 'Overview',
-        content: `A platform for students to present innovative projects across two levels: Junior (Class 5–12) and Senior (University & Polytechnic). Teams present for 5–7 minutes followed by a 3–5 minute Q&A with expert judges. Categories span robotics, AI, IoT, embedded systems, healthcare, energy, drones, and more.`,
-      },
-      {
-        title: 'Eligibility',
-        content: null,
-        list: [
-          'Junior Category: Currently enrolled students in Class 5–12 (school/college level)',
-          'Senior Category: Currently enrolled students at any university or polytechnic institute in Bangladesh',
-          'Mixed institution teams allowed within the same category',
-          'Maximum 4 members per team; additional members at ৳500/person',
-        ],
-      },
-      {
-        title: 'Project Categories',
-        content: null,
-        list: [
-          'Robotics and Automation',
-          'Internet of Things (IoT)',
-          'Artificial Intelligence and Machine Learning',
-          'Embedded Systems',
-          'Smart Agriculture',
-          'Smart Healthcare',
-          'Renewable Energy and Sustainability',
-          'Software Applications',
-          'Drone and Autonomous Systems',
-          'Innovative Hardware Solutions',
-          'Cybersecurity and Smart Systems',
-          'Open Innovation',
-        ],
-      },
-      {
-        title: 'Presentation Format',
-        content: null,
-        specs: [
-          ['Presentation Time', '5–7 minutes'],
-          ['Q&A Time', '3–5 minutes'],
-          ['Language', 'English or Bangla'],
-          ['Required Materials', 'Working prototype / live demo strongly recommended'],
-        ],
-      },
-      {
-        title: 'Judging Criteria (100 marks)',
-        content: null,
-        specs: [
-          ['Innovation & Creativity', '20 marks'],
-          ['Technical Complexity', '20 marks'],
-          ['Functionality & Implementation', '20 marks'],
-          ['Practical Impact & Usefulness', '15 marks'],
-          ['Presentation & Communication', '15 marks'],
-          ['Design & User Experience', '10 marks'],
-        ],
-      },
-      {
-        title: 'General Rules',
-        content: null,
-        list: [
-          'All projects must be original work of the team. Plagiarism leads to immediate disqualification.',
-          'Only officially registered teams may present.',
-          'Teams must be present at the designated time slot. No extensions granted.',
-          'Organizers reserve the right to verify team eligibility and project originality.',
-          'Decision of judges is final.',
-        ],
-      },
-    ],
-  },
-  {
-    id: 'line-follower',
-    name: 'Line Following Robot (LFR)',
+// ── Static detailed rules per segment slug ──────────────────────
+const SEGMENT_RULES = {
+  'lfr': {
     tagline: 'Autonomous Track Racing',
-    team: '1–5 members',
-    fee: '৳2,000',
-    prize: 'To Be Announced',
-    prizeDetails: null,
-    isTBA: true,
     sections: [
       {
         title: 'Overview',
@@ -106,7 +19,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Robot Technical Requirements',
-        content: null,
         specs: [
           ['Communication', 'NONE — fully autonomous, no wireless'],
           ['Max Dimensions', '25 cm (L) × 25 cm (W) × 15 cm (H)'],
@@ -119,7 +31,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Arena Specifications',
-        content: null,
         specs: [
           ['Arena Size', '15 ft × 15 ft (subject to change)'],
           ['Track Color', 'Black lines on white surface'],
@@ -129,7 +40,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Match Format',
-        content: null,
         specs: [
           ['Round 1', 'Maximum 300 seconds'],
           ['Round 2', 'Maximum 600 seconds'],
@@ -139,7 +49,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Scoring',
-        content: null,
         list: [
           '+100 points per checkpoint reached',
           'Time bonus applied (faster = more points)',
@@ -151,7 +60,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Disqualification Criteria',
-        content: null,
         list: [
           'Use of any wireless communication',
           'Robot using external power source',
@@ -163,19 +71,8 @@ const COMPETITIONS = [
       },
     ],
   },
-  {
-    id: 'robo-soccer',
-    name: 'Robo Soccer',
+  'robo-soccer': {
     tagline: 'Wireless Robot Soccer Matches',
-    team: '4–8 members',
-    fee: '৳2,000',
-    prize: '৳30,000 total',
-    prizeDetails: [
-      { place: '🥇 Champion', amount: '৳15,000', color: '#eab308' },
-      { place: '🥈 1st Runner-up', amount: '৳10,000', color: '#94a3b8' },
-      { place: '🥉 2nd Runner-up', amount: '৳5,000', color: '#b45309' },
-    ],
-    isTBA: false,
     sections: [
       {
         title: 'Overview',
@@ -183,7 +80,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Eligibility',
-        content: null,
         list: [
           'Undergraduate students from colleges and universities in Bangladesh',
           'Minimum 4 members per team (required); maximum 8 members',
@@ -192,7 +88,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Robot Technical Requirements',
-        content: null,
         specs: [
           ['Communication', 'REQUIRED — RF, NRF, or Bluetooth'],
           ['Wired Communication', 'PROHIBITED'],
@@ -209,7 +104,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Arena Specifications',
-        content: null,
         specs: [
           ['Arena Size', '4 ft × 8 ft'],
           ['Boundary Wall', '5–10 inches'],
@@ -219,7 +113,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Match Format & Scoring',
-        content: null,
         specs: [
           ['Total Duration', '6 minutes'],
           ['First Half', '3 minutes'],
@@ -233,7 +126,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Disqualification Criteria',
-        content: null,
         list: [
           'Deliberate physical damage to the opponent robot',
           'Using jamming devices',
@@ -245,99 +137,95 @@ const COMPETITIONS = [
       },
     ],
   },
-  {
-    id: 'techathon',
-    name: 'Techathon (IoT Hackathon)',
-    tagline: 'Two-Round IoT Challenge',
-    team: '1–4 members',
-    fee: 'Round 1: ৳100 | Grand Finale: ৳2,400',
-    prize: '৳30,000 total',
-    prizeDetails: [
-      { place: '🥇 Champion', amount: '৳15,000', color: '#eab308' },
-      { place: '🥈 1st Runner-up', amount: '৳10,000', color: '#94a3b8' },
-      { place: '🥉 2nd Runner-up', amount: '৳5,000', color: '#b45309' },
-    ],
-    isTBA: false,
+  'project-showcase': {
+    tagline: 'Junior & Senior Categories',
     sections: [
       {
         title: 'Overview',
-        content: `A two-round IoT hackathon. Round 1 is online — teams receive a problem statement and submit a proposal with a pitch video. Selected teams advance to the Grand Finale at BUBT where they build and demonstrate their IoT solution on-site. Cross-university teams are allowed.`,
+        content: `A platform for students to present innovative projects across two levels: Junior (Class 5–12) and Senior (University & Polytechnic). Teams present for 5–7 minutes followed by a 3–5 minute Q&A with expert judges.`,
       },
       {
         title: 'Eligibility',
-        content: null,
         list: [
-          'Currently enrolled undergraduate students from any recognized university in Bangladesh',
-          'Cross-university teams explicitly ALLOWED',
-          'Maximum 4 members per team',
+          'Junior Category: Currently enrolled students in Class 5–12',
+          'Senior Category: Currently enrolled university or polytechnic students',
+          'Mixed institution teams allowed within the same category',
+          'Maximum 4 members per team; additional members at ৳500/person',
         ],
       },
       {
-        title: 'Round 1 (Online)',
-        content: null,
+        title: 'Presentation Format',
         specs: [
-          ['Problem Statement', 'Released through official channels'],
-          ['Submission Format', 'PDF or PPT + max 3-minute pitch video'],
-          ['Max File Size', '20 MB'],
-          ['File Naming', 'FASTROBOX_Techathon_[TeamName]_R1'],
-          ['Round 1 Fee', 'BDT 100 per team'],
+          ['Presentation Time', '5–7 minutes'],
+          ['Q&A Time', '3–5 minutes'],
+          ['Language', 'English or Bangla'],
+          ['Materials', 'Working prototype / live demo strongly recommended'],
         ],
       },
       {
-        title: 'Grand Finale (On-site)',
-        content: null,
+        title: 'Judging Criteria (100 marks)',
         specs: [
-          ['Eligibility', 'Shortlisted teams from Round 1 only'],
-          ['Format', 'On-site project demonstration before judges'],
-          ['Grand Finale Fee', 'BDT 2,400 per team (paid after qualification)'],
-          ['Location', 'BUBT Campus, Mirpur, Dhaka'],
-          ['Date', '14 November 2026'],
+          ['Innovation & Creativity', '20 marks'],
+          ['Technical Complexity', '20 marks'],
+          ['Functionality & Implementation', '20 marks'],
+          ['Practical Impact', '15 marks'],
+          ['Presentation & Communication', '15 marks'],
+          ['Design & User Experience', '10 marks'],
         ],
       },
       {
-        title: 'Organizer-Provided Equipment',
-        content: null,
+        title: 'General Rules',
         list: [
-          'Microcontrollers: ESP32, Arduino Uno, Arduino Nano, Raspberry Pi',
-          'Sensors: Water-level, ESP32-CAM, Ultrasonic, LDR, Rain, Fire/Flame, DHT, Gas, Soil-moisture',
-          'Modules: Relay, Motor driver, Servo, Breadboards, Wires, Power/battery modules',
-          'Internet connectivity provided on-site',
-        ],
-      },
-      {
-        title: 'Allowed Technology Stack',
-        content: null,
-        list: [
-          'Backend/API: Python, Flask, FastAPI, Node.js, REST APIs',
-          'Databases: MySQL, SQLite, Firebase, MongoDB',
-          'Interfaces: Mobile apps, Web dashboards, IoT dashboards, Live monitoring, Notification systems',
-        ],
-      },
-      {
-        title: 'Disqualification Criteria',
-        content: null,
-        list: [
-          'Plagiarism or submission of pre-existing / open-source solutions without modification',
-          'Violation of hardware constraints provided by organizers',
-          'Failure to demonstrate working prototype at Grand Finale',
-          'Missing the submission deadline',
+          'All projects must be original work of the team.',
+          'Only officially registered teams may present.',
+          'Teams must be present at the designated time slot.',
+          'Decision of judges is final.',
         ],
       },
     ],
   },
-  {
-    id: 'poster-presentation',
-    name: 'Poster Presentation',
-    tagline: 'Academic Research Showcase',
-    team: '3–4 members',
-    fee: '৳400/member (৳1,200–৳1,600 total)',
-    prize: '৳20,000 total',
-    prizeDetails: [
-      { place: '🥇 Champion', amount: '৳10,000', color: '#eab308' },
-      { place: '🥈 1st Runner-up', amount: '৳6,000', color: '#94a3b8' },
-      { place: '🥉 2nd Runner-up', amount: '৳4,000', color: '#b45309' },
+  'project-showcase-senior': {
+    tagline: 'Senior Category',
+    sections: [
+      {
+        title: 'Overview',
+        content: `University & Polytechnic students present advanced projects in Robotics, AI, IoT, Healthcare, Energy, and Automation. Presentation is 5–7 mins followed by 3–5 mins Q&A.`,
+      },
+      {
+        title: 'Eligibility',
+        list: [
+          'Currently enrolled University & Polytechnic students',
+          'Maximum 4 members per team',
+        ],
+      },
+      {
+        title: 'Presentation Format',
+        specs: [
+          ['Presentation Time', '5–7 minutes'],
+          ['Q&A Time', '3–5 minutes'],
+          ['Language', 'English or Bangla'],
+        ],
+      },
     ],
-    isTBA: false,
+  },
+  'project-showcase-junior': {
+    tagline: 'Junior Category',
+    sections: [
+      {
+        title: 'Overview',
+        content: `School & College students (Class 5–12) showcase science, electronics, and technology projects. Presentation is 5–7 mins followed by 3–5 mins Q&A.`,
+      },
+      {
+        title: 'Eligibility',
+        list: [
+          'Currently enrolled students in Class 5–12 (School & College level)',
+          'Maximum 4 members per team',
+        ],
+      },
+    ],
+  },
+  'poster-presentation': {
+    tagline: 'Academic Research Showcase',
     sections: [
       {
         title: 'Overview',
@@ -345,7 +233,6 @@ const COMPETITIONS = [
       },
       {
         title: 'Eligibility',
-        content: null,
         list: [
           'Currently enrolled undergraduate students from any recognized institution in Bangladesh',
           'Team size: exactly 3–4 members',
@@ -354,30 +241,26 @@ const COMPETITIONS = [
       },
       {
         title: 'Six Research Tracks',
-        content: null,
         list: [
-          'Track 1 — Intelligent Computing, AI & Data Technologies (AI/ML, Data Science, Big Data Analytics)',
-          'Track 2 — Smart Systems, IoT, Robotics & Secure Technologies (IoT, Robotics, Mechatronics)',
-          'Track 3 — Smart Healthcare & Biomedical Engineering (Smart Healthcare, Biomedical, Biotechnology)',
-          'Track 4 — Renewable Energy, Smart Grids & Power Systems (Renewable Energy, Smart Grids, Sustainable Power)',
-          'Track 5 — Humanitarian & Societal Technological Solutions (Disaster Management, Assistive Tech, Rural Development)',
-          'Track 6 — Advanced Materials & Nanotechnology (Materials Science, Nanotechnology, Advanced Materials)',
+          'Track 1 — Intelligent Computing, AI & Data Technologies',
+          'Track 2 — Smart Systems, IoT, Robotics & Secure Technologies',
+          'Track 3 — Smart Healthcare & Biomedical Engineering',
+          'Track 4 — Renewable Energy, Smart Grids & Power Systems',
+          'Track 5 — Humanitarian & Societal Technological Solutions',
+          'Track 6 — Advanced Materials & Nanotechnology',
         ],
       },
       {
         title: 'Submission Requirements',
-        content: null,
         specs: [
           ['Format', 'PDF only'],
           ['Poster Size', 'Maximum 4 × 4 feet'],
-          ['File Naming', '[TeamName]_PosterPresentation_FASTROBOX_IEEE'],
           ['Deadline', 'Before registration closes (20 October 2026)'],
           ['Languages', 'English preferred'],
         ],
       },
       {
         title: 'Judging Criteria (60 marks)',
-        content: null,
         specs: [
           ['Content Quality', '10 marks'],
           ['Creativity', '10 marks'],
@@ -387,20 +270,9 @@ const COMPETITIONS = [
           ['Feasibility', '10 marks'],
         ],
       },
-      {
-        title: 'Fee Structure',
-        content: null,
-        specs: [
-          ['Fee Per Member', 'BDT 400'],
-          ['3-member team', 'BDT 1,200 total'],
-          ['4-member team', 'BDT 1,600 total'],
-          ['Payment Method', 'bKash or Nagad (numbers TBA)'],
-          ['Required', 'Transaction ID + payment screenshot'],
-        ],
-      },
     ],
   },
-];
+};
 
 function CompetitionSection({ title, content, list, specs }) {
   return (
@@ -431,8 +303,23 @@ function CompetitionSection({ title, content, list, specs }) {
 }
 
 export default function Rulebook() {
-  const [activeComp, setActiveComp] = useState('project-showcase');
-  const comp = COMPETITIONS.find(c => c.id === activeComp);
+  const [segments, setSegments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeId, setActiveId] = useState(null);
+
+  useEffect(() => {
+    getSegments()
+      .then(r => {
+        const segs = r.data.data || [];
+        setSegments(segs);
+        if (segs.length > 0) setActiveId(segs[0].id);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const activeSeg = segments.find(s => s.id === activeId);
+  const staticRules = activeSeg ? (SEGMENT_RULES[activeSeg.slug] || null) : null;
 
   return (
     <div style={{ minHeight: '100vh', paddingTop: 88, position: 'relative', zIndex: 1 }}>
@@ -440,7 +327,7 @@ export default function Rulebook() {
         <SectionHeader
           tag="Official Rulebook"
           title="Competition Rules & Regulations"
-          subtitle="Complete technical specifications, eligibility criteria, and judging guidelines for all five FASTROBOX 1.0 competitions."
+          subtitle="Complete technical specifications, eligibility criteria, and judging guidelines for all FASTROBOX 1.0 competitions."
         />
 
         {/* Disclaimer */}
@@ -451,98 +338,174 @@ export default function Rulebook() {
         }}>
           <AlertCircle size={18} style={{ color: '#eab308', flexShrink: 0, marginTop: 2 }} />
           <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: 1.7 }}>
-            <strong style={{ color: 'var(--text-secondary)' }}>Official Rulebook:</strong> The information below reflects the official FASTROBOX 1.0 Combined Rulebook & Event Overview.
+            <strong style={{ color: 'var(--text-secondary)' }}>Official Rulebook:</strong> The information below reflects the official FASTROBOX 1.0 Combined Rulebook &amp; Event Overview.
             Organizers reserve the right to amend rules before the event. Registered participants will be notified of any changes via the Notice Board.
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '2rem', alignItems: 'start' }}
-             className="rulebook-grid">
-
-          {/* Left sidebar — competition nav */}
-          <div className="glass-card" style={{ padding: '1rem', position: 'sticky', top: 88 }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem', padding: '0 4px' }}>
-              Competitions
-            </div>
-            {COMPETITIONS.map(c => (
-              <button
-                key={c.id}
-                onClick={() => setActiveComp(c.id)}
-                className={`rulebook-nav-item ${activeComp === c.id ? 'active' : ''}`}
-              >
-                <div style={{ flex: 1, textAlign: 'left' }}>
-                  <div style={{ fontWeight: 600, marginBottom: 2 }}>{c.name}</div>
-                  <div style={{ fontSize: '0.72rem', opacity: 0.7 }}>{c.team}</div>
-                </div>
-                {activeComp === c.id && <ChevronRight size={14} />}
-              </button>
-            ))}
-
-            <div style={{ borderTop: '1px solid var(--border-color)', marginTop: '1rem', paddingTop: '1rem' }}>
-              <Link to="/register" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '0.8rem' }}>
-                <Zap size={14} /> Register Now
-              </Link>
-            </div>
+        {loading ? (
+          <Loader text="Loading competitions..." />
+        ) : segments.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
+            <BookOpen size={40} style={{ opacity: 0.3, marginBottom: 12 }} />
+            <p>No competition segments available yet.</p>
           </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '2rem', alignItems: 'start' }}
+               className="rulebook-grid">
 
-          {/* Right — active competition content */}
-          {comp && (
-            <motion.div
-              key={comp.id}
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.25 }}
-            >
-              {/* Header */}
-              <div className="glass-card" style={{ padding: '2rem', marginBottom: '1.5rem', borderColor: 'rgba(34,197,94,0.2)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: '1.5rem' }}>
-                  <div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
-                      {comp.tagline}
+            {/* Left sidebar — segment nav */}
+            <div className="glass-card" style={{ padding: '1rem', position: 'sticky', top: 88 }}>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem', padding: '0 4px' }}>
+                Competitions
+              </div>
+              {segments.map(seg => (
+                <button
+                  key={seg.id}
+                  onClick={() => setActiveId(seg.id)}
+                  className={`rulebook-nav-item ${activeId === seg.id ? 'active' : ''}`}
+                >
+                  <div style={{ flex: 1, textAlign: 'left' }}>
+                    <div style={{ fontWeight: 600, marginBottom: 2 }}>{seg.name}</div>
+                    <div style={{ fontSize: '0.72rem', opacity: 0.7 }}>
+                      {seg.min_team_size}–{seg.max_team_size} members · ৳{Math.round(seg.registration_fee).toLocaleString()}
                     </div>
-                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.4rem, 3vw, 1.9rem)', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 0 }}>
-                      {comp.name}
-                    </h1>
                   </div>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                    <span className="tag tag-green" style={{ fontSize: '0.78rem' }}>Fee: {comp.fee}</span>
-                    <span className="tag tag-blue" style={{ fontSize: '0.78rem' }}>Team: {comp.team}</span>
+                  {activeId === seg.id && <ChevronRight size={14} />}
+                </button>
+              ))}
+
+              <div style={{ borderTop: '1px solid var(--border-color)', marginTop: '1rem', paddingTop: '1rem' }}>
+                <Link to="/register" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '0.8rem' }}>
+                  <Zap size={14} /> Register Now
+                </Link>
+              </div>
+            </div>
+
+            {/* Right — active segment content */}
+            {activeSeg && (
+              <motion.div
+                key={activeSeg.id}
+                initial={{ opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.25 }}
+              >
+                {/* Header card */}
+                <div className="glass-card" style={{ padding: '2rem', marginBottom: '1.5rem', borderColor: 'rgba(34,197,94,0.2)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: activeSeg.rulebook_path ? '1.5rem' : 0 }}>
+                    <div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
+                        {staticRules?.tagline || 'Competition Segment'}
+                      </div>
+                      <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.4rem, 3vw, 1.9rem)', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 0 }}>
+                        {activeSeg.name}
+                      </h1>
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <span className="tag tag-green" style={{ fontSize: '0.78rem' }}>Fee: ৳{Math.round(activeSeg.registration_fee).toLocaleString()}</span>
+                      <span className="tag tag-blue" style={{ fontSize: '0.78rem' }}>Team: {activeSeg.min_team_size}–{activeSeg.max_team_size} members</span>
+                    </div>
                   </div>
+
+                  {/* Rulebook PDF button — shown only if admin uploaded a PDF */}
+                  {activeSeg.rulebook_path && (
+                    <div style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      gap: 16, flexWrap: 'wrap',
+                      padding: '16px 20px',
+                      background: 'rgba(34,197,94,0.06)',
+                      border: '1px solid rgba(34,197,94,0.2)',
+                      borderRadius: 12,
+                      marginTop: activeSeg.rulebook_path ? '1.5rem' : 0,
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{
+                          width: 44, height: 44, borderRadius: 11,
+                          background: 'rgba(34,197,94,0.12)',
+                          border: '1px solid rgba(34,197,94,0.25)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          color: 'var(--color-primary)', flexShrink: 0,
+                        }}>
+                          <FileText size={22} />
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                            Official Rulebook PDF
+                          </div>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                            Full technical specifications for {activeSeg.name}
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: 10 }}>
+                        <a
+                          href={`/uploads/rulebooks/${activeSeg.rulebook_path}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn btn-outline btn-sm"
+                        >
+                          <BookOpen size={14} /> View PDF
+                        </a>
+                        <a
+                          href={`/uploads/rulebooks/${activeSeg.rulebook_path}`}
+                          download
+                          className="btn btn-primary btn-sm"
+                        >
+                          <Download size={14} /> Download
+                        </a>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Prize section */}
-                {comp.isTBA ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px', background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.2)', borderRadius: 10 }}>
-                    <AlertCircle size={18} style={{ color: '#eab308', flexShrink: 0 }} />
-                    <div>
-                      <div style={{ fontWeight: 600, color: '#eab308', fontSize: '0.9rem' }}>Prize Amounts — To Be Announced</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>The organizing committee will announce prize amounts for this competition soon.</div>
-                    </div>
+                {/* Static rule sections (if available for this slug) */}
+                {staticRules ? (
+                  <div className="glass-card" style={{ padding: '1.5rem 2rem' }}>
+                    {staticRules.sections.map(sec => (
+                      <CompetitionSection key={sec.title} {...sec} />
+                    ))}
                   </div>
                 ) : (
-                  <div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Prize Pool: {comp.prize}</div>
-                    <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                      {comp.prizeDetails?.map(p => (
-                        <div key={p.place} className="prize-card" style={{ flex: '1 1 120px', minWidth: 110, borderColor: p.color + '40' }}>
-                          <div style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6 }}>{p.place}</div>
-                          <div style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: 800, color: p.color }}>{p.amount}</div>
-                        </div>
-                      ))}
-                    </div>
+                  /* Fallback: show whatever is stored in DB */
+                  <div className="glass-card" style={{ padding: '1.5rem 2rem' }}>
+                    {activeSeg.full_description && (
+                      <div className="rulebook-section">
+                        <h3><BookOpen size={15} /> Overview</h3>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.75 }}>{activeSeg.full_description}</p>
+                      </div>
+                    )}
+                    {activeSeg.rules && (
+                      <div className="rulebook-section">
+                        <h3><BookOpen size={15} /> Rules</h3>
+                        <ul className="rulebook-rule-list">
+                          {activeSeg.rules.split('\n').filter(Boolean).map((r, i) => (
+                            <li key={i}>{r.replace(/^\d+\.\s*/, '').replace(/^-\s*/, '')}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {activeSeg.eligibility && (
+                      <div className="rulebook-section">
+                        <h3><BookOpen size={15} /> Eligibility</h3>
+                        <ul className="rulebook-rule-list">
+                          {activeSeg.eligibility.split('\n').filter(Boolean).map((e, i) => (
+                            <li key={i}>{e.replace(/^-\s*/, '')}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {!activeSeg.full_description && !activeSeg.rules && !activeSeg.eligibility && (
+                      <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+                        <BookOpen size={36} style={{ opacity: 0.3, marginBottom: 12, color: 'var(--color-primary)' }} />
+                        <p>Detailed rules for this segment are coming soon.</p>
+                      </div>
+                    )}
                   </div>
                 )}
-              </div>
-
-              {/* Rules sections */}
-              <div className="glass-card" style={{ padding: '1.5rem 2rem' }}>
-                {comp.sections.map(sec => (
-                  <CompetitionSection key={sec.title} {...sec} />
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </div>
+              </motion.div>
+            )}
+          </div>
+        )}
       </div>
 
       <style>{`
