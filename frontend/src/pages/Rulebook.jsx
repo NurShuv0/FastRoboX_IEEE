@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   BookOpen, ChevronRight, AlertCircle, Download, FileText,
@@ -303,6 +303,7 @@ function CompetitionSection({ title, content, list, specs }) {
 }
 
 export default function Rulebook() {
+  const location = useLocation();
   const [segments, setSegments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeId, setActiveId] = useState(null);
@@ -312,7 +313,11 @@ export default function Rulebook() {
       .then(r => {
         const segs = r.data.data || [];
         setSegments(segs);
-        if (segs.length > 0) setActiveId(segs[0].id);
+        // Pre-select segment from navigation state (from Segments page Details button),
+        // otherwise default to the first segment
+        const incoming = location.state?.segmentId;
+        const found = incoming && segs.find(s => s.id === incoming);
+        setActiveId(found ? incoming : (segs[0]?.id ?? null));
       })
       .catch(() => {})
       .finally(() => setLoading(false));

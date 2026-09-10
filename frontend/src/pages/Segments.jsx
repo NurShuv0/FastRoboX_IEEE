@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Cpu, Users, Trophy, ChevronRight, AlertCircle, Zap, BookOpen, ExternalLink } from 'lucide-react';
+import { AlertCircle, Zap, BookOpen, ExternalLink, ChevronRight } from 'lucide-react';
 import { getSegments } from '../services/api';
 import { SectionHeader, Loader } from '../components/UI/index.jsx';
-
-const SEGMENT_ICONS = {
-  'lfr': <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="28" height="28"><rect x="2" y="14" width="6" height="4" rx="1"/><rect x="16" y="14" width="6" height="4" rx="1"/><path d="M8 16h8M5 14V10a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/><path d="M9 8V6M15 8V6"/></svg>,
-  'line-follower': <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="28" height="28"><rect x="2" y="14" width="6" height="4" rx="1"/><rect x="16" y="14" width="6" height="4" rx="1"/><path d="M8 16h8M5 14V10a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/><path d="M9 8V6M15 8V6"/></svg>,
-  'robo-soccer': <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="28" height="28"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg>,
-  'project-showcase-senior': <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="28" height="28"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/><circle cx="16" cy="15" r="2"/><path d="M14 15h-4"/></svg>,
-  'project-showcase-junior': <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="28" height="28"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/><circle cx="16" cy="15" r="2"/><path d="M14 15h-4"/></svg>,
-  'project-showcase': <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="28" height="28"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/><circle cx="16" cy="15" r="2"/><path d="M14 15h-4"/></svg>,
-  'poster-presentation': <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" width="28" height="28"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h10M7 11h6"/></svg>,
-};
 
 const GOOGLE_FORM_FALLBACKS = {
   'lfr': 'https://forms.gle/TrhrrxYyuEXNjNd69',
@@ -63,7 +53,6 @@ export default function Segments() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
             {segments.map((seg, i) => {
-              const icon = SEGMENT_ICONS[seg.slug] || <Cpu size={28} />;
               const bgColor = SEGMENT_COLORS[seg.slug] || 'rgba(34,197,94,0.12)';
               const isTBA = seg.prize_pool === 'To Be Announced';
               const formUrl = seg.google_form_url || GOOGLE_FORM_FALLBACKS[seg.slug];
@@ -78,44 +67,43 @@ export default function Segments() {
                   className="glass-card segment-card"
                   style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', cursor: 'default' }}
                 >
-                  {/* Banner */}
+                  {/* Image Banner — full visible photo */}
                   <div style={{
-                    height: 140,
-                    background: `linear-gradient(135deg, ${bgColor} 0%, rgba(10,15,10,0.8) 100%)`,
-                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10,
+                    height: 190,
+                    background: `linear-gradient(135deg, ${bgColor} 0%, rgba(5,15,8,0.95) 100%)`,
                     position: 'relative',
+                    overflow: 'hidden',
                     borderBottom: '1px solid var(--border-color)',
                   }}>
-                    {seg.image_path && (
+                    {seg.image_path ? (
                       <img src={`/uploads/segments/${seg.image_path}`} alt={seg.name}
-                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.25 }} />
+                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 1 }} />
+                    ) : (
+                      <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${bgColor} 0%, rgba(5,15,8,0.95) 100%)` }} />
                     )}
-                    <div style={{
-                      width: 60, height: 60, borderRadius: 15,
-                      background: bgColor,
-                      border: '1px solid rgba(34,197,94,0.25)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: 'var(--color-primary)', position: 'relative', zIndex: 1,
-                      backdropFilter: 'blur(8px)',
-                    }}>
-                      {icon}
-                    </div>
+                    {/* Gradient overlay at bottom for readability */}
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, rgba(5,15,8,0.7) 100%)' }} />
                     <div style={{
                       position: 'absolute', top: 10, right: 10, zIndex: 1,
-                      background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.25)',
+                      background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.35)',
                       borderRadius: 6, padding: '3px 10px', fontSize: '0.68rem', fontWeight: 700,
                       color: 'var(--color-primary)', textTransform: 'uppercase', letterSpacing: '0.05em',
+                      backdropFilter: 'blur(6px)',
                     }}>
                       Open
                     </div>
+                    {/* Segment name overlay at bottom of image */}
+                    <div style={{
+                      position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 1,
+                      padding: '8px 14px',
+                    }}>
+                      <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.05rem', fontWeight: 800, color: '#fff', margin: 0, textShadow: '0 1px 8px rgba(0,0,0,0.8)' }}>
+                        {seg.name}
+                      </h2>
+                    </div>
                   </div>
 
-                  <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    {/* Name */}
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>
-                      {seg.name}
-                    </h2>
-
+                  <div style={{ padding: '1.25rem 1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
                     {/* Description */}
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '1rem', flex: 1 }}>
                       {seg.short_description}
@@ -151,7 +139,7 @@ export default function Segments() {
 
                     {/* Actions */}
                     <div style={{ display: 'flex', gap: 8 }}>
-                      <Link to={`/segments/${seg.id}`} className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}>
+                      <Link to="/rulebook" state={{ segmentId: seg.id }} className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}>
                         <BookOpen size={14} /> Details
                       </Link>
                       <a

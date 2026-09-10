@@ -1,8 +1,8 @@
 <?php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'fastrobox_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'sql304.infinityfree.com');
+define('DB_NAME', 'if0_42874533_fastrobox');
+define('DB_USER', 'if0_42874533');
+define('DB_PASS', 'Hellonur123');
 define('DB_CHARSET', 'utf8mb4');
 
 define('JWT_SECRET', 'fastrobox_jwt_secret_2026_bubt_super_secure');

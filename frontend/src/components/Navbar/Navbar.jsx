@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Sun, Moon, Menu, X, Zap } from 'lucide-react';
+import { Sun, Moon, Menu, X } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import RobotIcon from '../Common/RobotIcon';
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -87,7 +88,7 @@ export default function Navbar() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 0 15px rgba(34,197,94,0.35)',
             }}>
-              <Zap size={22} color="#052e16" strokeWidth={2.5} />
+              <RobotIcon size={22} color="#052e16" strokeWidth={2.2} />
             </div>
             <div>
               <div style={{
@@ -223,7 +224,9 @@ export default function Navbar() {
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',
               borderBottom: '1px solid var(--border-color)',
-              padding: '12px 20px 20px',
+              maxHeight: 'calc(100vh - 68px)',
+              overflowY: 'auto',
+              padding: '12px 20px 24px',
               display: 'flex',
               flexDirection: 'column',
               gap: 2,

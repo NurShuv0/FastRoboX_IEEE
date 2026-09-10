@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
   ArrowLeft, Users, Trophy, FileText,
   Download, BookOpen,
-  Calendar, Zap, ChevronRight, Cpu
+  Calendar, Zap, Cpu
 } from 'lucide-react';
 import { getSegment } from '../services/api';
 import { useSettings } from '../context/SettingsContext';
@@ -60,7 +59,6 @@ export default function SegmentDetails() {
   const [seg, setSeg] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
   const { getSetting } = useSettings();
 
   const eventDate = getSetting('event_date', '2026-11-14');
@@ -92,13 +90,6 @@ export default function SegmentDetails() {
 
   const icon = SEGMENT_ICONS[seg.slug] || <Cpu size={36} />;
   const bannerColor = SEGMENT_BANNER_COLORS[seg.slug] || 'rgba(34,197,94,0.12)';
-  const isTBAPrize = !seg.prize_pool || seg.prize_pool === 'To Be Announced';
-
-  const tabs = [
-    { key: 'overview', label: 'Overview' },
-    { key: 'rules', label: 'Rules' },
-    { key: 'eligibility', label: 'Eligibility' },
-  ];
 
   return (
     <div style={{ minHeight: '100vh', paddingTop: 88, position: 'relative', zIndex: 1 }}>
@@ -115,7 +106,7 @@ export default function SegmentDetails() {
       }}>
         {seg.image_path && (
           <img src={`/uploads/segments/${seg.image_path}`} alt={seg.name}
-            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.1 }} />
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.35 }} />
         )}
         <div style={{ position: 'absolute', inset: 0, background: 'var(--gradient-hero)' }} />
 
@@ -165,7 +156,7 @@ export default function SegmentDetails() {
                   {seg.min_team_size === seg.max_team_size ? `${seg.min_team_size} members` : `${seg.min_team_size}–${seg.max_team_size} members`}
                 </span>
                 <span className="tag tag-blue">৳{Math.round(seg.registration_fee).toLocaleString()} entry</span>
-                {!isTBAPrize && seg.prize_pool && (
+                {seg.prize_pool && seg.prize_pool !== 'To Be Announced' && (
                   <span className="tag tag-yellow">{seg.prize_pool} prize</span>
                 )}
               </div>
@@ -180,86 +171,9 @@ export default function SegmentDetails() {
 
         {/* ── MAIN CONTENT ── */}
         <div>
-          {/* Tab Bar */}
-          <div style={{
-            display: 'flex', gap: 4, marginBottom: '1.5rem',
-            background: 'var(--bg-card)', borderRadius: 12, padding: 4,
-            border: '1px solid var(--border-color)', width: 'fit-content',
-          }}>
-            {tabs.map(tab => (
-              <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-                padding: '8px 20px', borderRadius: 9, border: 'none', cursor: 'pointer',
-                fontSize: '0.875rem', fontWeight: 600, transition: 'all 0.2s',
-                background: activeTab === tab.key ? 'var(--color-primary)' : 'transparent',
-                color: activeTab === tab.key ? '#052e16' : 'var(--text-muted)',
-              }}>
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="glass-card"
-            style={{ padding: '1.75rem' }}
-          >
-            {activeTab === 'overview' && (
-              <div>
-                <h3 className="rulebook-section" style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', color: 'var(--color-primary)', marginBottom: '1rem', paddingBottom: 0, borderBottom: 'none' }}>
-                  About This Competition
-                </h3>
-                <p style={{ color: 'var(--text-secondary)', lineHeight: 1.9, fontSize: '0.925rem', whiteSpace: 'pre-line' }}>
-                  {seg.full_description || seg.short_description}
-                </p>
-              </div>
-            )}
-
-            {activeTab === 'rules' && (
-              <div>
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>
-                  Competition Rules
-                </h3>
-                {seg.rules ? (
-                  <ul className="rulebook-rule-list">
-                    {seg.rules.split('\n').filter(Boolean).map((rule, i) => (
-                      <li key={i}>{rule.replace(/^\d+\.\s*/, '').replace(/^-\s*/, '')}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
-                    <BookOpen size={36} style={{ opacity: 0.3, marginBottom: 12, color: 'var(--color-primary)' }} />
-                    <p>Full rules are available in the <Link to="/rulebook" style={{ color: 'var(--color-primary)' }}>Official Rulebook</Link>.</p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'eligibility' && (
-              <div>
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', color: 'var(--color-primary)', marginBottom: '1rem' }}>
-                  Eligibility Requirements
-                </h3>
-                {seg.eligibility ? (
-                  <ul className="rulebook-rule-list">
-                    {seg.eligibility.split('\n').filter(Boolean).map((e, i) => (
-                      <li key={i}>{e.replace(/^-\s*/, '')}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '0.925rem' }}>
-                    Open to currently enrolled students at any university or college in Bangladesh.
-                  </p>
-                )}
-              </div>
-            )}
-          </motion.div>
-
           {/* Rulebook Download */}
           {seg.rulebook_path && (
-            <div className="glass-card" style={{ padding: '1.25rem 1.5rem', marginTop: '1rem' }}>
+            <div className="glass-card" style={{ padding: '1.25rem 1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div style={{
@@ -285,16 +199,6 @@ export default function SegmentDetails() {
               </div>
             </div>
           )}
-
-          {/* Link to rulebook page */}
-          <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-            <Link to="/rulebook" style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 5 }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
-            >
-              View full competition rules for all segments <ChevronRight size={14} />
-            </Link>
-          </div>
         </div>
 
         {/* ── SIDEBAR ── */}

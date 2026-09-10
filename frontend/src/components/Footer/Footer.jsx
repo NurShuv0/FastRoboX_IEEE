@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, Mail, Phone, MapPin, Globe, AlertCircle, Share2, MessageCircle, Play, ExternalLink } from 'lucide-react';
+import { Mail, Phone, MapPin, Globe, AlertCircle, Share2, MessageCircle, Play, ExternalLink } from 'lucide-react';
+import RobotIcon from '../Common/RobotIcon';
 import { useSettings } from '../../context/SettingsContext';
 
 const quickLinks = [
@@ -92,7 +93,7 @@ export default function Footer() {
                 borderRadius: 10,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <Zap size={20} color="#052e16" strokeWidth={2.5} />
+                <RobotIcon size={20} color="#052e16" strokeWidth={2.2} />
               </div>
               <div>
                 <div style={{

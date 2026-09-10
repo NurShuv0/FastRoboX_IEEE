@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Route /api/* requests to backend/index.php
+  RewriteRule ^api/(.*)$ backend/index.php [QSA,L]
+
+  # 2. Route /uploads/* requests to backend/uploads/$1
+  RewriteRule ^uploads/(.*)$ backend/uploads/$1 [L]
+
+  # 3. Serve static files/directories if they exist
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # 4. Route all React SPA client routes to index.html
+  RewriteRule ^ index.html [L]
+</IfModule>

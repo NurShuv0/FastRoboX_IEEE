@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate, Outlet, Navigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import {
   LayoutDashboard, Bell, Layers, ClipboardList, Calendar,
-  Award, HelpCircle, Image, MessageSquare, LogOut, Zap,
+  Award, HelpCircle, Image, MessageSquare, LogOut,
   Menu, X, User, ChevronRight, ExternalLink, Settings
 } from 'lucide-react';
+import RobotIcon from '../../components/Common/RobotIcon';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -63,7 +63,7 @@ function Sidebar({ open, setOpen }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
           }}>
-            <Zap size={18} color="#052e16" strokeWidth={2.5} />
+            <RobotIcon size={18} color="#052e16" strokeWidth={2.2} />
           </div>
           <div>
             <div style={{
