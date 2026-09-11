@@ -250,7 +250,7 @@ export default function Register() {
         {/* Footer info note */}
         <div style={{ marginTop: '3rem', textAlign: 'center', padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: 14, border: '1px solid var(--border-color)' }}>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.65 }}>
-            Need help or have questions regarding registration? Contact our official support team at <strong style={{ color: 'var(--color-primary)' }}>fastrobox@gmail.com</strong> or call <strong style={{ color: 'var(--color-primary)' }}>+880 1794-269151</strong>.
+            Need help or have questions regarding registration? Contact our official support team at <strong style={{ color: 'var(--color-primary)' }}>{getSetting('contact_email', 'ieeesb@bubt.edu.bd')}</strong> or call <strong style={{ color: 'var(--color-primary)' }}>{getSetting('contact_phone', '+880 1794-269151')}</strong>.
           </p>
         </div>
 

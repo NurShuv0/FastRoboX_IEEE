@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Sun, Moon, Menu, X } from 'lucide-react';
+import { Sun, Moon, Menu, X, Volume2, VolumeX } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import RobotIcon from '../Common/RobotIcon';
 
 const navLinks = [
-  { label: 'Home', to: '/' },
   { label: 'Notice', to: '/notice' },
   { label: 'Segments', to: '/segments' },
-  { label: 'Rulebook', to: '/rulebook' },
   { label: 'Timeline', to: '/timeline' },
+  { label: 'Sponsors', to: '/sponsors' },
   { label: 'FAQ', to: '/faq' },
   { label: 'Contact', to: '/contact' },
 ];
@@ -19,6 +18,7 @@ export default function Navbar() {
   const { toggleTheme, isDark } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [audioOn, setAudioOn] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -31,7 +31,6 @@ export default function Navbar() {
     setMenuOpen(false);
   }, [location]);
 
-  // Close menu on outside click
   useEffect(() => {
     if (!menuOpen) return;
     const handler = (e) => {
@@ -62,11 +61,11 @@ export default function Navbar() {
           alignItems: 'center',
           padding: '0 24px',
           transition: 'all 0.3s ease',
-          background: scrolled ? 'var(--bg-glass)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(20px)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
-          borderBottom: scrolled ? '1px solid var(--border-color)' : '1px solid transparent',
-          boxShadow: scrolled ? 'var(--shadow-glow)' : 'none',
+          background: scrolled ? 'rgba(9, 13, 22, 0.95)' : 'rgba(9, 13, 22, 0.88)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
         }}
       >
         <div style={{
@@ -79,64 +78,54 @@ export default function Navbar() {
           gap: 24,
         }}>
 
-          {/* Logo */}
+          {/* Left to Right Logos: BUBT -> IEEE -> Fastrobox */}
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            <div style={{
-              width: 40, height: 40,
-              background: 'var(--gradient-primary)',
-              borderRadius: 10,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 15px rgba(34,197,94,0.35)',
-            }}>
-              <RobotIcon size={22} color="#052e16" strokeWidth={2.2} />
-            </div>
-            <div>
-              <div style={{
-                fontFamily: 'var(--font-heading)',
-                fontWeight: 800,
-                fontSize: '1.05rem',
-                background: 'var(--gradient-primary)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                lineHeight: 1.1,
-                letterSpacing: '-0.02em',
-              }}>FASTROBOX</div>
-              <div style={{ fontSize: '0.58rem', color: 'var(--text-muted)', letterSpacing: '0.14em', textTransform: 'uppercase', lineHeight: 1 }}>1.0 &bull; IEEE BUBT</div>
-            </div>
+            {/* 1. BUBT Logo */}
+            <img
+              src="/images/bubt.png"
+              alt="BUBT Logo"
+              style={{ height: 38, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
+            />
+
+            <div style={{ width: 1, height: 22, background: 'rgba(255, 255, 255, 0.2)' }} />
+
+            {/* 2. IEEE BUBT SB Logo */}
+            <img
+              src="/images/IEEE.png"
+              alt="IEEE BUBT Student Branch Logo"
+              style={{ height: 38, width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}
+            />
+
+            <div style={{ width: 1, height: 22, background: 'rgba(255, 255, 255, 0.2)' }} />
+
+            {/* 3. FastRoboX 1.0 Logo (Always White Logo) */}
+            <img
+              src="/images/Fastrobox_white.png"
+              alt="FastRoboX 1.0"
+              style={{ height: 28, width: 'auto', objectFit: 'contain' }}
+            />
           </Link>
 
           {/* Desktop Nav */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1, justifyContent: 'center' }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1, justifyContent: 'center' }}
                className="desktop-nav">
             {navLinks.map(link => (
               <NavLink
                 key={link.label}
                 to={link.to}
                 style={({ isActive: navIsActive }) => ({
-                  padding: '6px 12px',
+                  padding: '6px 14px',
                   borderRadius: 8,
-                  fontSize: '0.85rem',
-                  fontWeight: navIsActive ? 600 : 500,
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
                   textDecoration: 'none',
-                  color: navIsActive ? 'var(--color-primary)' : 'var(--text-secondary)',
-                  background: navIsActive ? 'rgba(34,197,94,0.08)' : 'transparent',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color: navIsActive ? '#dc2626' : '#cbd5e1',
+                  background: navIsActive ? 'rgba(220, 38, 38, 0.15)' : 'transparent',
                   transition: 'all 0.2s ease',
-                  letterSpacing: '0.01em',
-                  border: navIsActive ? '1px solid rgba(34,197,94,0.15)' : '1px solid transparent',
+                  border: navIsActive ? '1px solid rgba(220, 38, 38, 0.3)' : '1px solid transparent',
                 })}
-                onMouseEnter={e => {
-                  if (!isActive(link.to)) {
-                    e.currentTarget.style.color = 'var(--color-primary)';
-                    e.currentTarget.style.background = 'rgba(34,197,94,0.06)';
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!isActive(link.to)) {
-                    e.currentTarget.style.color = 'var(--text-secondary)';
-                    e.currentTarget.style.background = 'transparent';
-                  }
-                }}
               >
                 {link.label}
               </NavLink>
@@ -145,42 +134,53 @@ export default function Navbar() {
 
           {/* Right Side */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+            {/* Register CTA Button */}
+            <Link
+              to="/register"
+              id="nav-register-btn"
+              className="btn btn-primary btn-pill"
+              style={{ fontSize: '0.8rem', padding: '8px 22px', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 800 }}
+            >
+              REGISTER
+            </Link>
+
+            {/* Audio Toggle */}
+            <button
+              onClick={() => setAudioOn(v => !v)}
+              title={audioOn ? "Mute audio" : "Turn on audio!"}
+              style={{
+                width: 36, height: 36,
+                borderRadius: '50%',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                background: audioOn ? 'rgba(220, 38, 38, 0.25)' : 'rgba(255, 255, 255, 0.08)',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: audioOn ? '#dc2626' : '#94a3b8',
+                transition: 'all 0.2s ease',
+                position: 'relative',
+              }}
+            >
+              {audioOn ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            </button>
+
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
               id="theme-toggle-btn"
               style={{
                 width: 36, height: 36,
-                borderRadius: 10,
-                border: '1px solid var(--border-color)',
-                background: 'var(--bg-card)',
+                borderRadius: '50%',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                background: 'rgba(255, 255, 255, 0.08)',
                 cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--color-primary)',
+                color: '#ffffff',
                 transition: 'all 0.2s ease',
               }}
               title={`Switch to ${isDark ? 'Light' : 'Dark'} Mode`}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'var(--color-primary)';
-                e.currentTarget.style.boxShadow = '0 0 10px rgba(34,197,94,0.2)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--border-color)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
             >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              {isDark ? <Sun size={16} color="#fbbf24" /> : <Moon size={16} color="#ffffff" />}
             </button>
-
-            {/* Register Button */}
-            <Link
-              to="/register"
-              id="nav-register-btn"
-              className="btn btn-primary"
-              style={{ fontSize: '0.82rem', padding: '7px 18px' }}
-            >
-              Register
-            </Link>
 
             {/* Hamburger */}
             <button
@@ -192,11 +192,11 @@ export default function Navbar() {
                 display: 'none',
                 width: 36, height: 36,
                 borderRadius: 10,
-                border: '1px solid var(--border-color)',
-                background: 'var(--bg-card)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                background: 'rgba(255, 255, 255, 0.08)',
                 cursor: 'pointer',
                 alignItems: 'center', justifyContent: 'center',
-                color: 'var(--text-primary)',
+                color: '#ffffff',
               }}
             >
               {menuOpen ? <X size={18} /> : <Menu size={18} />}
@@ -220,16 +220,16 @@ export default function Navbar() {
               left: 0,
               right: 0,
               zIndex: 999,
-              background: 'var(--bg-glass)',
+              background: 'rgba(9, 13, 22, 0.95)',
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',
-              borderBottom: '1px solid var(--border-color)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
               maxHeight: 'calc(100vh - 68px)',
               overflowY: 'auto',
-              padding: '12px 20px 24px',
+              padding: '16px 20px 24px',
               display: 'flex',
               flexDirection: 'column',
-              gap: 2,
+              gap: 4,
             }}
           >
             {navLinks.map(link => (
@@ -240,13 +240,14 @@ export default function Navbar() {
                 style={({ isActive: navIsActive }) => ({
                   padding: '12px 16px',
                   borderRadius: 10,
-                  fontSize: '0.975rem',
-                  fontWeight: navIsActive ? 600 : 500,
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
                   textDecoration: 'none',
-                  color: navIsActive ? 'var(--color-primary)' : 'var(--text-secondary)',
-                  background: navIsActive ? 'rgba(34,197,94,0.08)' : 'transparent',
-                  border: navIsActive ? '1px solid rgba(34,197,94,0.15)' : '1px solid transparent',
-                  transition: 'all 0.15s ease',
+                  color: navIsActive ? '#dc2626' : '#cbd5e1',
+                  background: navIsActive ? 'rgba(220, 38, 38, 0.15)' : 'transparent',
+                  border: navIsActive ? '1px solid rgba(220, 38, 38, 0.3)' : '1px solid transparent',
                 })}
               >
                 {link.label}
@@ -254,11 +255,11 @@ export default function Navbar() {
             ))}
             <Link
               to="/register"
-              className="btn btn-primary"
-              style={{ marginTop: 10, justifyContent: 'center' }}
+              className="btn btn-primary btn-pill"
+              style={{ marginTop: 12, justifyContent: 'center', textTransform: 'uppercase', fontWeight: 800 }}
               onClick={() => setMenuOpen(false)}
             >
-              Register Now
+              REGISTER NOW
             </Link>
           </motion.div>
         )}

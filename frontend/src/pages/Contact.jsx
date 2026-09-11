@@ -16,11 +16,11 @@ export default function Contact() {
   const [success, setSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
-  const email = getSetting('contact_email');
+  const email = getSetting('contact_email', 'ieeesb@bubt.edu.bd');
   const phone = getSetting('contact_phone');
   const whatsapp = getSetting('contact_whatsapp');
   const address = getSetting('contact_address', 'BUBT Campus, Rupnagar R/A, Mirpur-2, Dhaka-1216');
-  const organizer = getSetting('organizer_name', "IEEE Students' Branch");
+  const organizer = getSetting('organizer_name', 'IEEE BUBT Student Branch');
   const host = getSetting('host_university', 'Bangladesh University of Business and Technology (BUBT)');
 
   const set = (key, val) => setForm(prev => ({ ...prev, [key]: val }));

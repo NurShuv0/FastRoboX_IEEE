@@ -20,6 +20,7 @@ import FAQ from './pages/FAQ';
 import Contact from './pages/Contact';
 import Register from './pages/Register';
 import RegistrationStatus from './pages/RegistrationStatus';
+import Sponsors from './pages/Sponsors';
 import NotFound from './pages/NotFound';
 
 // Admin
@@ -68,6 +69,7 @@ export default function App() {
                 <Route path="/segments/:id" element={<PublicLayout><SegmentDetails /></PublicLayout>} />
                 <Route path="/rulebook" element={<PublicLayout><Rulebook /></PublicLayout>} />
                 <Route path="/timeline" element={<PublicLayout><Timeline /></PublicLayout>} />
+                <Route path="/sponsors" element={<PublicLayout><Sponsors /></PublicLayout>} />
                 <Route path="/faq" element={<PublicLayout><FAQ /></PublicLayout>} />
                 <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
                 <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />

@@ -4,12 +4,22 @@ import { motion, useInView } from 'framer-motion';
 import {
   Zap, ChevronRight, Trophy, Users, Building2, ArrowRight,
   Calendar, Clock, Bot, Cpu, Rocket, ChevronDown,
-  Radio, GitBranch, Presentation, BookOpen
+  Radio, Star, Handshake, MessageSquare, ExternalLink, Flame
 } from 'lucide-react';
 import { getSegments, getSponsors } from '../services/api';
 import { useSettings } from '../context/SettingsContext';
+import { useTheme } from '../context/ThemeContext';
 import { SectionHeader, Loader, EmptyState } from '../components/UI/index.jsx';
 
+// Segment theme color mapping matching NRF26
+const getSegmentColor = (name = '') => {
+  const lower = name.toLowerCase();
+  if (lower.includes('soccer')) return { bg: '#2563eb', tagBg: 'rgba(37,99,235,0.15)', text: '#60a5fa', border: 'rgba(37,99,235,0.3)' };
+  if (lower.includes('line') || lower.includes('lfr')) return { bg: '#059669', tagBg: 'rgba(5,150,105,0.15)', text: '#34d399', border: 'rgba(5,150,105,0.3)' };
+  if (lower.includes('hack') || lower.includes('tech')) return { bg: '#db2777', tagBg: 'rgba(219,39,119,0.15)', text: '#f472b6', border: 'rgba(219,39,119,0.3)' };
+  if (lower.includes('poster')) return { bg: '#d97706', tagBg: 'rgba(217,119,6,0.15)', text: '#fbbf24', border: 'rgba(217,119,6,0.3)' };
+  return { bg: '#dc2626', tagBg: 'rgba(220,38,38,0.15)', text: '#fca5a5', border: 'rgba(220,38,38,0.3)' };
+};
 
 // ── COUNTDOWN ────────────────────────────────────────────────────
 function Countdown({ targetDate, label = 'Event starts in' }) {
@@ -33,8 +43,8 @@ function Countdown({ targetDate, label = 'Event starts in' }) {
 
   if (!time) {
     return (
-      <div style={{ textAlign: 'center', padding: '16px', color: 'var(--color-primary)', fontWeight: 700 }}>
-        Event has concluded. Thank you for participating!
+      <div style={{ textAlign: 'center', padding: '12px', color: '#dc2626', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        🚩 EVENT SUCCESSFULLY COMPLETED!
       </div>
     );
   }
@@ -48,13 +58,13 @@ function Countdown({ targetDate, label = 'Event starts in' }) {
 
   return (
     <div>
-      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10, textAlign: 'center' }}>
+      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 10, textAlign: 'center', fontWeight: 700 }}>
         {label}
       </div>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
         {boxes.map(({ val, label: l }) => (
-          <div key={l} className="countdown-box">
-            <div className="countdown-number">{String(val).padStart(2, '0')}</div>
+          <div key={l} className="countdown-box" style={{ borderRadius: 16, borderColor: 'rgba(220, 38, 38, 0.25)', minWidth: 85 }}>
+            <div className="countdown-number" style={{ color: '#dc2626' }}>{String(val).padStart(2, '0')}</div>
             <div className="countdown-label">{l}</div>
           </div>
         ))}
@@ -63,77 +73,36 @@ function Countdown({ targetDate, label = 'Event starts in' }) {
   );
 }
 
-// ── ANIMATED STAT ────────────────────────────────────────────────
-function AnimStat({ value, label, icon, suffix = '' }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-    const num = parseInt(value);
-    const step = Math.ceil(num / 60);
-    let cur = 0;
-    const id = setInterval(() => {
-      cur = Math.min(cur + step, num);
-      setCount(cur);
-      if (cur >= num) clearInterval(id);
-    }, 20);
-    return () => clearInterval(id);
-  }, [inView, value]);
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5 }}
-      className="glass-card"
-      style={{ padding: '1.75rem', textAlign: 'center' }}
-    >
-      <div style={{
-        width: 48, height: 48, borderRadius: 12,
-        background: 'rgba(34,197,94,0.1)',
-        border: '1px solid rgba(34,197,94,0.2)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        margin: '0 auto 1rem',
-        color: 'var(--color-primary)',
-      }}>
-        {icon}
-      </div>
-      <div style={{
-        fontFamily: 'var(--font-heading)',
-        fontSize: 'clamp(1.8rem, 4vw, 2.5rem)',
-        fontWeight: 800,
-        color: 'var(--color-primary)',
-        lineHeight: 1,
-      }}>
-        {count}{suffix}
-      </div>
-      <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: 6 }}>{label}</div>
-    </motion.div>
-  );
-}
-
 // ── SEGMENT CARD ────────────────────────────────────────────────
 function SegmentCard({ seg, index }) {
+  const theme = getSegmentColor(seg.name);
+  const { isDark } = useTheme();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.08 }}
-      whileHover={{ y: -6, boxShadow: '0 0 40px rgba(34,197,94,0.2)' }}
+      whileHover={{ y: -6, boxShadow: `0 0 35px ${theme.tagBg}` }}
       className="glass-card segment-card"
-      style={{ overflow: 'hidden', cursor: 'default', display: 'flex', flexDirection: 'column' }}
+      style={{
+        overflow: 'hidden',
+        cursor: 'default',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRadius: 20,
+        borderColor: 'var(--border-color)',
+        height: '100%',
+      }}
     >
       {/* Full image banner */}
       <div style={{
-        height: 180,
+        height: 190,
         position: 'relative',
         overflow: 'hidden',
         borderBottom: '1px solid var(--border-color)',
-        background: 'rgba(5,15,8,0.9)',
+        background: '#090d16',
       }}>
         {seg.image_path ? (
           <img
@@ -142,54 +111,71 @@ function SegmentCard({ seg, index }) {
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 1 }}
           />
         ) : (
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(34,197,94,0.15), rgba(5,15,8,0.9))' }} />
+          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${theme.tagBg}, rgba(9,13,22,0.95))` }} />
         )}
-        {/* Bottom gradient overlay */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.05) 30%, rgba(5,15,8,0.82) 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 20%, rgba(9,13,22,0.88) 100%)' }} />
 
-        {/* Team size tag */}
+        {/* Category tag */}
         <div style={{
-          position: 'absolute', top: 10, left: 10, zIndex: 1,
-          background: 'rgba(34,197,94,0.18)', border: '1px solid rgba(34,197,94,0.4)',
-          borderRadius: 6, padding: '3px 10px', fontSize: '0.68rem', fontWeight: 700,
-          color: 'var(--color-primary)', backdropFilter: 'blur(6px)',
+          position: 'absolute', top: 12, left: 12, zIndex: 1,
+          background: 'rgba(9, 13, 22, 0.75)', border: `1px solid ${theme.border}`,
+          borderRadius: 8, padding: '4px 12px', fontSize: '0.68rem', fontWeight: 800,
+          color: theme.text, textTransform: 'uppercase', letterSpacing: '0.06em', backdropFilter: 'blur(8px)',
         }}>
-          {seg.min_team_size === seg.max_team_size ? `${seg.min_team_size}` : `${seg.min_team_size}–${seg.max_team_size}`} members
+          {seg.min_team_size === seg.max_team_size ? `${seg.min_team_size} Member` : `${seg.min_team_size}–${seg.max_team_size} Members`}
         </div>
 
-        {/* Name at bottom of image */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '10px 16px', zIndex: 1 }}>
-          <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 700, color: '#fff', lineHeight: 1.3, margin: 0, textShadow: '0 1px 6px rgba(0,0,0,0.9)' }}>
+        {/* Title at bottom of image */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '12px 18px', zIndex: 1 }}>
+          <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', fontWeight: 800, color: '#fff', lineHeight: 1.25, margin: 0, textShadow: '0 2px 8px rgba(0,0,0,0.9)' }}>
             {seg.name}
           </h3>
         </div>
       </div>
 
       <div style={{ padding: '1.25rem 1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.65, marginBottom: '1rem', flex: 1 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.65, marginBottom: '1.25rem', flex: 1 }}>
           {seg.short_description}
         </p>
 
         {/* Fee + Prize */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-          <span className="tag tag-green" style={{ fontSize: '0.7rem' }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: '1.25rem', alignItems: 'center' }}>
+          <span style={{
+            fontSize: '0.72rem', fontWeight: 800, padding: '5px 12px', borderRadius: 100,
+            background: 'rgba(220, 38, 38, 0.1)', color: isDark ? '#fca5a5' : '#b91c1c', border: '1px solid rgba(220, 38, 38, 0.3)'
+          }}>
             Fee: ৳{Math.round(seg.registration_fee).toLocaleString()}
           </span>
           {seg.prize_pool && (
-            <span className="tag tag-yellow" style={{ fontSize: '0.7rem' }}>
+            <span style={{
+              fontSize: '0.72rem', fontWeight: 800, padding: '5px 12px', borderRadius: 100,
+              background: 'rgba(245, 158, 11, 0.1)', color: isDark ? '#fcd34d' : '#b45309', border: '1px solid rgba(245, 158, 11, 0.3)'
+            }}>
               Prize: {seg.prize_pool === 'To Be Announced' ? 'TBA' : seg.prize_pool}
             </span>
           )}
         </div>
 
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link to="/rulebook" state={{ segmentId: seg.id }} className="btn btn-outline btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}>
-            Details
-          </Link>
-          <Link to={`/register?segment=${seg.id}`} className="btn btn-primary btn-sm" style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}>
-            Register
-          </Link>
-        </div>
+        {/* Full Width Clean Action Button */}
+        <Link
+          to={`/register?segment=${seg.id}`}
+          className="btn btn-pill"
+          style={{
+            width: '100%',
+            justify: 'center',
+            fontSize: '0.82rem',
+            fontWeight: 800,
+            background: theme.bg,
+            color: '#ffffff',
+            boxShadow: `0 4px 18px ${theme.tagBg}`,
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            padding: '10px 20px',
+            marginTop: 'auto',
+          }}
+        >
+          REGISTER NOW <ArrowRight size={14} style={{ marginLeft: 6 }} />
+        </Link>
       </div>
     </motion.div>
   );
@@ -202,18 +188,16 @@ export default function Home() {
   const [segLoading, setSegLoading] = useState(true);
   const [sponLoading, setSponLoading] = useState(true);
   const { getSetting } = useSettings();
+  const { isDark } = useTheme();
 
   const eventDate = getSetting('event_date', '2026-11-14');
   const deadline = getSetting('registration_deadline', '2026-10-20');
   const prizePool = getSetting('event_prize_pool', 'BDT 200K+');
-  const organizer = getSetting('organizer_name', 'IEEE Students\' Branch');
-
-  const aboutRef = useRef(null);
-  const isAboutInView = useInView(aboutRef, { once: true, margin: '-100px' });
+  const organizer = getSetting('organizer_name', 'IEEE BUBT Student Branch');
 
   useEffect(() => {
-    getSegments().then(r => setSegments(r.data.data || [])).catch(() => {}).finally(() => setSegLoading(false));
-    getSponsors().then(r => setSponsors(r.data.data || [])).catch(() => {}).finally(() => setSponLoading(false));
+    getSegments().then(r => setSegments(r.data.data || [])).catch(() => { }).finally(() => setSegLoading(false));
+    getSponsors().then(r => setSponsors(r.data.data || [])).catch(() => { }).finally(() => setSponLoading(false));
   }, []);
 
   const sponsorsByCategory = sponsors.reduce((acc, s) => {
@@ -223,7 +207,6 @@ export default function Home() {
     return acc;
   }, {});
 
-  // Format date for display
   const formatDate = (dateStr) => {
     try {
       return new Date(dateStr + 'T00:00:00+06:00').toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -233,291 +216,260 @@ export default function Home() {
   return (
     <div style={{ position: 'relative', zIndex: 1 }}>
 
-      {/* ── HERO ────────────────────────────────────────────────── */}
+      {/* ── TOP MARQUEE LIVE RADAR BAR ──────────────────────────── */}
+      <div style={{
+        marginTop: 68,
+        background: 'var(--bg-secondary)',
+        borderBottom: '1px solid var(--border-color)',
+        display: 'flex',
+        alignItems: 'center',
+        height: 38,
+        overflow: 'hidden',
+        position: 'relative',
+        zIndex: 90,
+      }}>
+        <div style={{
+          background: '#dc2626',
+          color: '#ffffff',
+          fontWeight: 900,
+          fontSize: '0.68rem',
+          padding: '0 16px',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 6,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          flexShrink: 0,
+          zIndex: 2,
+          boxShadow: '4px 0 12px rgba(0,0,0,0.15)',
+        }}>
+          <span className="animate-blink" style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff' }} />
+          LIVE RADAR
+        </div>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <div className="marquee-container">
+            <div className="marquee-track" style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+              <span style={{ paddingRight: 40 }}>
+                🏆 <strong>REGISTRATION OPEN:</strong> FastRoboX 1.0 — BUBT National Robotics Competition | Prize Pool: <strong>BDT 200,000+</strong>
+              </span>
+              <span style={{ paddingRight: 40 }}>
+                ⚡ <strong>5 COMPETE SEGMENTS:</strong> Robo Soccer, Line Follower Robot, Techathon Hackathon, Project Showcase &amp; Poster Presentation
+              </span>
+              <span style={{ paddingRight: 40 }}>
+                📜 <strong>CERTIFICATES:</strong> Official participation certificates will be awarded to all verified teams.
+              </span>
+              {/* Duplicated for 100% seamless infinite running loop */}
+              <span style={{ paddingRight: 40 }}>
+                🏆 <strong>REGISTRATION OPEN:</strong> FastRoboX 1.0 — BUBT National Robotics Competition | Prize Pool: <strong>BDT 200,000+</strong>
+              </span>
+              <span style={{ paddingRight: 40 }}>
+                ⚡ <strong>5 COMPETE SEGMENTS:</strong> Robo Soccer, Line Follower Robot, Techathon Hackathon, Project Showcase &amp; Poster Presentation
+              </span>
+              <span style={{ paddingRight: 40 }}>
+                📜 <strong>CERTIFICATES:</strong> Official participation certificates will be awarded to all verified teams.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── HERO SECTION ────────────────────────────────────────── */}
       <section style={{
-        minHeight: '100vh',
+        minHeight: '88vh',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '100px 24px 60px',
+        padding: '60px 24px 80px',
         position: 'relative',
         overflow: 'hidden',
       }}>
-        {/* Hero background image */}
+        {/* Background Overlay */}
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: `linear-gradient(180deg, rgba(5,15,8,0.65) 0%, rgba(5,15,8,0.85) 70%, var(--bg-primary) 100%), url('/images/hero_robotics_bg.png')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
+          background: `var(--gradient-dark)`,
           zIndex: 0,
         }} />
-        {/* Extra radial glow overlay */}
+
+        {/* Ambient Crimson Glow */}
         <div style={{
           position: 'absolute', inset: 0,
-          background: 'radial-gradient(ellipse at 30% 50%, rgba(34,197,94,0.1) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse at 50% 25%, rgba(220, 38, 38, 0.14) 0%, transparent 70%)',
           zIndex: 0,
         }} />
-        {/* Floating segment preview "screens" - decorative CTA style */}
-        <div className="hero-floating-screens" style={{
-          position: 'absolute', right: '3%', top: '50%', transform: 'translateY(-50%)',
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, opacity: 0.18,
-          zIndex: 0, pointerEvents: 'none',
-        }}>
-          {['LFR', 'Robo Soccer', 'Project', 'Poster'].map((label, i) => (
-            <div key={label} style={{
-              width: 130, height: 80, borderRadius: 10,
-              background: 'rgba(34,197,94,0.15)',
-              border: '1px solid rgba(34,197,94,0.3)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '0.7rem', color: '#22c55e', fontWeight: 700,
-              transform: `rotate(${i % 2 === 0 ? '-2deg' : '2deg'}) translateY(${i > 1 ? '8px' : '0'})`,
-            }}>{label}</div>
-          ))}
-        </div>
 
-        {/* Background glows */}
-        <div className="hero-glow" style={{
-          width: 700, height: 700, top: -150, left: '50%',
-          transform: 'translateX(-50%)',
-          background: 'radial-gradient(ellipse, rgba(34,197,94,0.15) 0%, transparent 65%)',
-        }} />
+        <div style={{ maxWidth: 1040, width: '100%', textAlign: 'center', position: 'relative', zIndex: 1 }}>
 
-        <div style={{ maxWidth: 960, width: '100%', textAlign: 'center', position: 'relative', zIndex: 1 }}>
-          {/* Organizer badge */}
+          {/* Official Fastrobox 2026 Hero Logo */}
+          <motion.div
+            initial={{ opacity: 0, y: 25, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              margin: '0 auto 2.5rem',
+            }}
+          >
+            <img
+              src={isDark ? "/images/Fastrobox_white.png" : "/images/Fastrobox 2026 logo-01.png"}
+              alt="FastRobox 1.0 — IEEE BUBT Student Branch"
+              style={{
+                width: '100%',
+                maxWidth: 'clamp(320px, 75vw, 680px)',
+                height: 'auto',
+                display: 'block',
+                objectFit: 'contain',
+                filter: isDark
+                  ? 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.35)) drop-shadow(0 0 50px rgba(255, 255, 255, 0.15))'
+                  : 'drop-shadow(0 4px 20px rgba(0, 0, 0, 0.12))',
+              }}
+            />
+          </motion.div>
+
+          {/* Hero Metrics Pill Container */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}
-          >
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '6px 18px',
-              border: '1px solid rgba(34,197,94,0.3)',
+            transition={{ duration: 0.5, delay: 0.4 }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 24,
+              padding: '14px 32px',
+              background: 'var(--bg-glass)',
+              border: '1px solid var(--border-color)',
               borderRadius: 100,
-              background: 'rgba(34,197,94,0.07)',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: 'var(--color-primary)',
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-            }}>
-              <span className="animate-blink" style={{
-                width: 6, height: 6, borderRadius: '50%',
-                background: 'var(--color-primary)',
-                display: 'inline-block',
-              }} />
-              {organizer} &mdash; Registration Open
+              backdropFilter: 'blur(16px)',
+              boxShadow: 'var(--shadow-card), 0 0 20px rgba(220, 38, 38, 0.1)',
+              flexWrap: 'wrap',
+              justify: 'center',
+              marginBottom: '2.5rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(37, 99, 235, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
+                <Calendar size={18} />
+              </div>
+              <div style={{ textAlign: 'left' }}>
+                <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', fontWeight: 700 }}>EVENT DATE</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>14 November, 2026</div>
+              </div>
+            </div>
+
+            <div style={{ width: 1, height: 32, background: 'var(--border-color)' }} />
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(245, 158, 11, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d97706' }}>
+                <Trophy size={18} />
+              </div>
+              <div style={{ textAlign: 'left' }}>
+                <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', fontWeight: 700 }}>TOTAL PRIZE POOL</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626' }}>2,00,000+ BDT</div>
+              </div>
             </div>
           </motion.div>
 
-          {/* Logo Icon */}
+          {/* Registration Deadline Pill Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            style={{
-              width: 88, height: 88,
-              background: 'var(--gradient-primary)',
-              borderRadius: 22,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 1.5rem',
-              boxShadow: '0 0 40px rgba(34,197,94,0.4), 0 0 80px rgba(34,197,94,0.12)',
-            }}
-          >
-            <Zap size={46} color="#052e16" strokeWidth={2.5} />
-          </motion.div>
-
-          {/* Event Name */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: 'clamp(2.8rem, 8vw, 5rem)',
-              fontWeight: 900,
-              background: 'linear-gradient(135deg, #22c55e 0%, #a3e635 50%, #86efac 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              lineHeight: 1.05,
-              marginBottom: '0.5rem',
-              letterSpacing: '-0.04em',
-            }}
-          >
-            FASTROBOX 1.0
-          </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: 'clamp(0.95rem, 2.5vw, 1.2rem)',
-              fontWeight: 600,
-              color: 'var(--text-secondary)',
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              marginBottom: '1.25rem',
-            }}
-          >
-            National Robotics &amp; Tech Carnival
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
             style={{
-              fontSize: 'clamp(0.95rem, 2vw, 1.1rem)',
-              color: 'var(--text-muted)',
-              maxWidth: 580,
-              margin: '0 auto 2rem',
-              lineHeight: 1.75,
+              maxWidth: 440,
+              margin: '0 auto 2.5rem',
+              padding: '16px 24px',
+              background: 'rgba(220, 38, 38, 0.06)',
+              border: '1px solid rgba(220, 38, 38, 0.25)',
+              borderRadius: 20,
+              textAlign: 'center',
             }}
           >
-            Where machines think, innovators rise, and champions are made.
-            Hosted by <strong style={{ color: 'var(--text-secondary)' }}>Bangladesh University of Business and Technology (BUBT)</strong>.
-          </motion.p>
+            <div style={{ fontSize: '0.7rem', color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700, marginBottom: 4 }}>
+              REGISTRATION DEADLINE
+            </div>
+            <div style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: 8 }}>
+              {formatDate(deadline)}
+            </div>
+            <span style={{ fontSize: '0.68rem', fontWeight: 800, padding: '4px 14px', borderRadius: 100, background: '#dc2626', color: '#ffffff', letterSpacing: '0.06em' }}>
+              REGISTRATION OPEN NOW
+            </span>
+          </motion.div>
 
-          {/* Info Pills */}
+          {/* Hero CTAs */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2.5rem' }}
-          >
-            {[
-              { icon: <Calendar size={14} />, text: formatDate(eventDate) },
-              { icon: <Clock size={14} />, text: `Deadline: ${formatDate(deadline)}` },
-              { icon: <Trophy size={14} />, text: `Prize Pool: ${prizePool}` },
-            ].map(({ icon, text }) => (
-              <div key={text} style={{
-                display: 'flex', alignItems: 'center', gap: 7,
-                padding: '7px 15px',
-                background: 'rgba(34,197,94,0.07)',
-                border: '1px solid rgba(34,197,94,0.18)',
-                borderRadius: 9,
-                fontSize: '0.83rem',
-                color: 'var(--text-secondary)',
-              }}>
-                <span style={{ color: 'var(--color-primary)' }}>{icon}</span>
-                {text}
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Countdown */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.65 }}
-            style={{ marginBottom: '2.5rem' }}
-          >
-            <Countdown
-              targetDate={`${eventDate}T09:00:00+06:00`}
-              label="Days until the event"
-            />
-          </motion.div>
-
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.75 }}
-            className="hero-cta-group"
             style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}
           >
-            <Link to="/register" className="btn btn-primary btn-xl">
-              <Zap size={18} /> Register Now
+            <Link to="/register" className="btn btn-primary btn-xl btn-pill">
+              <Zap size={18} /> REGISTER YOUR TEAM
             </Link>
-            <Link to="/segments" className="btn btn-outline btn-xl">
-              Explore Competitions <ChevronRight size={16} />
-            </Link>
-            <Link to="/rulebook" className="btn btn-ghost btn-xl">
-              <BookOpen size={18} /> View Rulebook
+            <Link to="/segments" className="btn btn-outline btn-xl btn-pill">
+              EXPLORE SEGMENTS <ChevronRight size={16} />
             </Link>
           </motion.div>
 
-          {/* Scroll indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2 }}
-            style={{ marginTop: '3rem', color: 'var(--text-dim)' }}
-          >
-            <ChevronDown size={22} style={{ margin: '0 auto', animation: 'float-up 2s ease-in-out infinite alternate' }} />
-          </motion.div>
         </div>
       </section>
 
-      {/* ── ABOUT ─────────────────────────────────────────────── */}
-      <section ref={aboutRef} style={{ padding: '80px 24px', position: 'relative', zIndex: 1 }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <SectionHeader
-            tag="About the Event"
-            title="What is FASTROBOX 1.0?"
-            subtitle="A national platform uniting Bangladesh's brightest engineering minds through robotics, technology, and innovation."
-          />
+      {/* ── ACTION HUB CARDS ────────────────────────────────────── */}
+      <section style={{ padding: '40px 24px', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
-            {[
-              {
-                icon: <Bot size={22} />,
-                title: 'Our Mission',
-                text: 'To cultivate innovation, technical excellence, and collaborative spirit among the next generation of robotics and technology leaders in Bangladesh.',
-              },
-              {
-                icon: <Cpu size={22} />,
-                title: 'Five Competitions',
-                text: 'Project Showcasing, Line Following Robot, Robo Soccer, Techathon (IoT Hackathon), and Poster Presentation — something for every engineering discipline.',
-              },
-              {
-                icon: <Trophy size={22} />,
-                title: 'Why Participate?',
-                text: 'Win prizes totaling BDT 200K+, network with industry leaders, showcase your skills to top companies, and represent your university at the national level.',
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={isAboutInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="glass-card"
-                style={{ padding: '1.75rem' }}
-              >
-                <div style={{
-                  width: 44, height: 44, borderRadius: 12,
-                  background: 'rgba(34,197,94,0.1)',
-                  border: '1px solid rgba(34,197,94,0.2)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'var(--color-primary)', marginBottom: '1rem',
-                }}>{item.icon}</div>
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', fontWeight: 700, marginBottom: 8, color: 'var(--text-primary)' }}>{item.title}</h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.75 }}>{item.text}</p>
-              </motion.div>
-            ))}
+          <div className="glass-card" style={{ padding: '1.5rem', borderRadius: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(220,38,38,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#dc2626', flexShrink: 0 }}>
+              <Star size={22} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fff', marginBottom: 4 }}>Become a Campus Ambassador</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 10 }}>Represent your university at FastRoboX 1.0</div>
+              <Link to="/contact" className="btn btn-primary btn-sm btn-pill" style={{ fontSize: '0.72rem' }}>
+                APPLY NOW
+              </Link>
+            </div>
           </div>
 
-          {/* Stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-            <AnimStat value="500" suffix="+" label="Expected Participants" icon={<Users size={22} />} />
-            <AnimStat value="30" suffix="+" label="Universities" icon={<Building2 size={22} />} />
-            <AnimStat value="5" suffix="" label="Competition Segments" icon={<Cpu size={22} />} />
-            <AnimStat value="200" suffix="K+" label="Prize Pool (BDT)" icon={<Trophy size={22} />} />
+          <div className="glass-card" style={{ padding: '1.5rem', borderRadius: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(37,99,235,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#60a5fa', flexShrink: 0 }}>
+              <Handshake size={22} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fff', marginBottom: 4 }}>Become a Partner</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 10 }}>Sponsor or collaborate with FastRoboX</div>
+              <Link to="/contact" className="btn btn-outline btn-sm btn-pill" style={{ fontSize: '0.72rem' }}>
+                PARTNER WITH US
+              </Link>
+            </div>
           </div>
+
+          <div className="glass-card" style={{ padding: '1.5rem', borderRadius: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(245,158,11,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fcd34d', flexShrink: 0 }}>
+              <Flame size={22} />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fff', marginBottom: 4 }}>Official Notice Board</div>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: 10 }}>Get official updates & downloadable rulebooks</div>
+              <Link to="/notice" className="btn btn-ghost btn-sm btn-pill" style={{ fontSize: '0.72rem' }}>
+                VIEW NOTICES
+              </Link>
+            </div>
+          </div>
+
         </div>
       </section>
+
+
 
       {/* ── COMPETITION SEGMENTS ──────────────────────────────── */}
-      <section id="segments" style={{ padding: '80px 24px', position: 'relative', zIndex: 1, background: 'rgba(34,197,94,0.02)' }}>
+      <section id="segments" style={{ padding: '80px 24px', position: 'relative', zIndex: 1 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <SectionHeader
-            tag="Competition Segments"
-            title="Five Ways to Compete"
-            subtitle="From autonomous robotics to IoT hackathons, choose your challenge and assemble your team."
+            tag="COMPETITIONS"
+            title="CHOOSE YOUR BATTLEGROUND"
+            subtitle="Assemble your team, select your discipline, and compete for national glory."
           />
+
           {segLoading ? (
             <Loader text="Loading competition segments..." />
           ) : segments.length === 0 ? (
@@ -527,157 +479,53 @@ export default function Home() {
               message="Competition segments will be announced shortly. Stay tuned!"
             />
           ) : (
-            <>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-                {segments.map((seg, i) => <SegmentCard key={seg.id} seg={seg} index={i} />)}
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <Link to="/segments" className="btn btn-outline">
-                  View All Competition Details <ChevronRight size={16} />
-                </Link>
-              </div>
-            </>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              {segments.map((seg, i) => <SegmentCard key={seg.id} seg={seg} index={i} />)}
+            </div>
           )}
         </div>
       </section>
 
       {/* ── HOST INSTITUTION ──────────────────────────────────── */}
       <section style={{ padding: '80px 24px', position: 'relative', zIndex: 1 }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-          <SectionHeader tag="Host Institution" title="Organized By" />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="glass-card gradient-border"
-            style={{ padding: '3rem', position: 'relative' }}
-          >
+        <div style={{ maxWidth: 840, margin: '0 auto', textAlign: 'center' }}>
+          <SectionHeader tag="ORGANIZER" title="HOSTED BY IEEE BUBT STUDENT BRANCH" />
+          <div className="glass-card" style={{ padding: '3rem 2rem', borderRadius: 24, borderColor: 'rgba(220,38,38,0.25)' }}>
             <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: 12, marginBottom: '1.5rem',
-              padding: '10px 20px', background: 'rgba(34,197,94,0.08)',
-              border: '1px solid rgba(34,197,94,0.2)', borderRadius: 12,
+              display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: '1.25rem',
+              padding: '8px 18px', background: 'rgba(220,38,38,0.1)',
+              border: '1px solid rgba(220,38,38,0.25)', borderRadius: 100,
             }}>
-              <Zap size={20} style={{ color: 'var(--color-primary)' }} />
-              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-primary)' }}>
-                IEEE Students' Branch
+              <Zap size={18} style={{ color: '#dc2626' }} />
+              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '0.85rem', fontWeight: 800, color: '#dc2626', textTransform: 'uppercase' }}>
+                IEEE BUBT Student Branch
               </span>
             </div>
-            <h3 style={{
-              fontFamily: 'var(--font-heading)', fontSize: '1.4rem', fontWeight: 800,
-              color: 'var(--text-primary)', marginBottom: 6,
-            }}>
+            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: 8 }}>
               Bangladesh University of Business and Technology
             </h3>
-            <div style={{
-              fontSize: '0.85rem', color: 'var(--text-muted)',
-              letterSpacing: '0.06em', marginBottom: '1.25rem',
-            }}>BUBT &mdash; Mirpur, Dhaka, Bangladesh</div>
-            <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, maxWidth: 520, margin: '0 auto' }}>
-              BUBT is a leading private university in Bangladesh committed to academic excellence, research, and innovation.
-              As the proud host of FASTROBOX 1.0, the IEEE Students' Branch empowers students through national-level robotics competitions
-              that bridge academia and industry.
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: '1.25rem', fontWeight: 600 }}>
+              BUBT PERMANENT CAMPUS — MIRPUR, DHAKA
+            </div>
+            <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, maxWidth: 580, margin: '0 auto', fontSize: '0.9rem' }}>
+              BUBT is a premier university dedicated to engineering excellence. As the proud host of FastRoboX 1.0,
+              the IEEE BUBT Student Branch empowers student innovators through national-level robotics competitions.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* ── SPONSORS ──────────────────────────────────────────── */}
-      <section id="sponsors" style={{ padding: '80px 24px', position: 'relative', zIndex: 1, background: 'rgba(34,197,94,0.02)' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-          <SectionHeader
-            tag="Our Partners"
-            title="Sponsors &amp; Partners"
-            subtitle="We thank our generous sponsors and partners for making FASTROBOX 1.0 possible."
-          />
-          {sponLoading ? (
-            <Loader text="Loading sponsors..." />
-          ) : Object.keys(sponsorsByCategory).length === 0 ? (
-            <EmptyState
-              icon={<Trophy size={40} />}
-              title="Sponsors Will Be Announced Soon"
-              message="Partnership announcements are coming. Interested in sponsoring FASTROBOX 1.0? Contact the organizing committee."
-            />
-          ) : (
-            Object.entries(sponsorsByCategory).map(([cat, items]) => (
-              <div key={cat} style={{ marginBottom: '3rem' }}>
-                <div style={{
-                  textAlign: 'center', marginBottom: '1.5rem',
-                  fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.14em',
-                  color: 'var(--text-muted)',
-                }}>
-                  — {cat} —
-                </div>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: `repeat(auto-fit, minmax(${cat === 'Title Sponsor' ? '200px' : '140px'}, 1fr))`,
-                  gap: '1rem',
-                }}>
-                  {items.map(sp => (
-                    <a key={sp.id} href={sp.website_url || undefined} target="_blank" rel="noopener noreferrer"
-                       className="sponsor-logo-card" style={{ cursor: sp.website_url ? 'pointer' : 'default' }}>
-                      {sp.logo_path
-                        ? <img src={`/uploads/sponsors/${sp.logo_path}`} alt={sp.name} style={{ maxHeight: 60, maxWidth: '100%', objectFit: 'contain' }} />
-                        : <span style={{ fontFamily: 'var(--font-heading)', fontSize: '1rem', color: 'var(--text-muted)' }}>{sp.name}</span>
-                      }
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
+      {/* ── FLOATING MESSENGER SUPPORT BUTTON ────────────────── */}
+      <a
+        href="https://m.me/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="floating-messenger"
+        title="Contact Support"
+      >
+        <MessageSquare size={24} />
+      </a>
 
-      {/* ── CTA BANNER ────────────────────────────────────────── */}
-      <section style={{ padding: '80px 24px', position: 'relative', zIndex: 1 }}>
-        <div style={{ maxWidth: 800, margin: '0 auto' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="glass-card"
-            style={{
-              textAlign: 'center', padding: '3rem 2rem',
-              background: 'linear-gradient(135deg, rgba(34,197,94,0.07) 0%, rgba(163,230,53,0.04) 100%)',
-              borderColor: 'rgba(34,197,94,0.25)',
-            }}
-          >
-            <div style={{
-              width: 60, height: 60, borderRadius: 15,
-              background: 'rgba(34,197,94,0.1)',
-              border: '1px solid rgba(34,197,94,0.2)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 1.5rem',
-              color: 'var(--color-primary)',
-            }}>
-              <Rocket size={28} />
-            </div>
-            <h2 style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: 'clamp(1.5rem, 4vw, 2rem)',
-              fontWeight: 800,
-              color: 'var(--text-primary)', marginBottom: 12,
-            }}>
-              Ready to Compete?
-            </h2>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '1rem', lineHeight: 1.75 }}>
-              Registration closes <strong style={{ color: 'var(--color-primary)' }}>{formatDate(deadline)}</strong>.
-              Don't miss your chance to compete at the national level and win from a prize pool of{' '}
-              <strong style={{ color: 'var(--color-primary)' }}>{prizePool}</strong>.
-            </p>
-            <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link to="/register" className="btn btn-primary btn-lg">
-                <Zap size={18} /> Register Your Team
-              </Link>
-              <Link to="/notice" className="btn btn-outline btn-lg">
-                View Notices <ArrowRight size={16} />
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
     </div>
   );
 }

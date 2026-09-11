@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Globe, AlertCircle, Share2, MessageCircle, Play, ExternalLink } from 'lucide-react';
 import RobotIcon from '../Common/RobotIcon';
 import { useSettings } from '../../context/SettingsContext';
+import { useTheme } from '../../context/ThemeContext';
 
 const quickLinks = [
   { label: 'Home', to: '/' },
@@ -10,6 +11,7 @@ const quickLinks = [
   { label: 'Segments', to: '/segments' },
   { label: 'Rulebook', to: '/rulebook' },
   { label: 'Timeline', to: '/timeline' },
+  { label: 'Sponsors', to: '/sponsors' },
   { label: 'FAQ', to: '/faq' },
   { label: 'Contact', to: '/contact' },
   { label: 'Register', to: '/register' },
@@ -25,8 +27,9 @@ const competitions = [
 
 export default function Footer() {
   const { getSetting, hasSetting } = useSettings();
+  const { isDark } = useTheme();
 
-  const email = getSetting('contact_email');
+  const email = getSetting('contact_email', 'ieeesb@bubt.edu.bd');
   const phone = getSetting('contact_phone');
   const address = getSetting('contact_address');
   const facebook = getSetting('social_facebook');
@@ -34,7 +37,7 @@ export default function Footer() {
   const linkedin = getSetting('social_linkedin');
   const youtube = getSetting('social_youtube');
   const website = getSetting('social_website');
-  const organizer = getSetting('organizer_name', 'IEEE Students\' Branch');
+  const organizer = getSetting('organizer_name', 'IEEE BUBT Student Branch');
   const host = getSetting('host_university', 'Bangladesh University of Business and Technology (BUBT)');
 
   const hasSocials = facebook || instagram || linkedin || youtube || website;
@@ -72,7 +75,7 @@ export default function Footer() {
       <div style={{
         position: 'absolute',
         top: 0, left: '5%', right: '5%', height: 1,
-        background: 'linear-gradient(90deg, transparent, var(--color-primary), transparent)',
+        background: 'linear-gradient(90deg, transparent, #dc2626, transparent)',
         filter: 'blur(1px)',
       }} />
 
@@ -86,25 +89,18 @@ export default function Footer() {
 
           {/* Brand Column */}
           <div style={{ maxWidth: 280 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: '1rem' }}>
-              <div style={{
-                width: 38, height: 38,
-                background: 'var(--gradient-primary)',
-                borderRadius: 10,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <RobotIcon size={20} color="#052e16" strokeWidth={2.2} />
-              </div>
-              <div>
-                <div style={{
-                  fontFamily: 'var(--font-heading)', fontWeight: 800,
-                  fontSize: '1rem', color: 'var(--color-primary)',
-                  letterSpacing: '-0.02em',
-                }}>FASTROBOX 1.0</div>
-                <div style={{ fontSize: '0.62rem', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  National Robotics & Tech Carnival
-                </div>
-              </div>
+            <div style={{ marginBottom: '1.25rem' }}>
+              <img
+                src={isDark ? "/images/Fastrobox_white.png" : "/images/Fastrobox 2026 logo-01.png"}
+                alt="FastRoboX 1.0"
+                style={{
+                  height: 42,
+                  width: 'auto',
+                  maxWidth: '100%',
+                  objectFit: 'contain',
+                  display: 'block',
+                }}
+              />
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', lineHeight: 1.75, marginBottom: '1.25rem' }}>
               Organized by <strong style={{ color: 'var(--text-secondary)' }}>{organizer}</strong> at{' '}

@@ -146,7 +146,7 @@ export function SectionHeader({ tag, title, subtitle, centered = true }) {
     }}>
       {tag && (
         <div style={{ marginBottom: '0.75rem', display: 'flex', justifyContent: centered ? 'center' : 'flex-start' }}>
-          <Badge color="green">{tag}</Badge>
+          <Badge color="red">{tag}</Badge>
         </div>
       )}
       <h2 className="section-title">{title}</h2>

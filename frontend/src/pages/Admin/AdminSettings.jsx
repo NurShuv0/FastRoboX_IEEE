@@ -28,11 +28,11 @@ const FIELD_CONFIG = {
     { key: 'registration_is_open', label: 'Registration Open? (1=Yes, 0=No)', type: 'select', options: [['1', 'Yes — Open'], ['0', 'No — Closed']] },
   ],
   org: [
-    { key: 'organizer_name', label: 'Organizer Name', type: 'text', placeholder: "IEEE Students' Branch" },
+    { key: 'organizer_name', label: 'Organizer Name', type: 'text', placeholder: 'IEEE BUBT Student Branch' },
     { key: 'host_university', label: 'Host University (Full Name)', type: 'text', placeholder: 'Bangladesh University of Business and Technology (BUBT)' },
   ],
   contact: [
-    { key: 'contact_email', label: 'Contact Email', type: 'email', placeholder: 'organizer@bubt.edu.bd' },
+    { key: 'contact_email', label: 'Contact Email', type: 'email', placeholder: 'ieeesb@bubt.edu.bd' },
     { key: 'contact_phone', label: 'Contact Phone', type: 'text', placeholder: '+880 1XXXXXXXXX' },
     { key: 'contact_whatsapp', label: 'WhatsApp Number', type: 'text', placeholder: '+8801XXXXXXXXX (include country code)' },
     { key: 'contact_address', label: 'Contact Address', type: 'text', placeholder: 'BUBT Campus, Rupnagar R/A, Mirpur-2, Dhaka-1216' },

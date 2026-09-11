@@ -1,7 +1,7 @@
 -- ================================================================
 -- FASTROBOX 1.0 — MySQL Database Schema
 -- National Robotics & Tech Carnival
--- Organized by: IEEE Students' Branch
+-- Organized by: IEEE BUBT Student Branch
 -- Host: Bangladesh University of Business and Technology (BUBT)
 -- Event Date: 14 November 2026
 -- ================================================================
@@ -266,7 +266,7 @@ INSERT INTO `site_settings` (`setting_key`, `setting_value`, `setting_group`, `l
 ('registration_deadline', '2026-10-20', 'event', 'Registration Deadline'),
 ('registration_is_open', '1', 'event', 'Registration Open (1=yes, 0=no)'),
 -- Organization
-('organizer_name', 'IEEE Students'' Branch', 'org', 'Organizer Name'),
+('organizer_name', 'IEEE BUBT Student Branch', 'org', 'Organizer Name'),
 ('host_university', 'Bangladesh University of Business and Technology (BUBT)', 'org', 'Host University'),
 -- Contact (Empty by default — admin fills these in)
 ('contact_email', '', 'contact', 'Contact Email'),
@@ -408,7 +408,7 @@ INSERT INTO `faqs` (`question`, `answer`, `display_order`, `is_active`) VALUES
 ('What are the five competition segments?', 'FASTROBOX 1.0 features five competitions: (1) Project Showcasing — Junior & Senior categories for innovative technology projects. (2) Line Following Robot (LFR) — build the fastest autonomous track-following robot. (3) Robo Soccer — wireless-controlled robot soccer matches. (4) Techathon — a two-round IoT Hackathon. (5) Poster Presentation — academic research poster presentation across 6 tracks.', 2, 1),
 ('What are the registration fees?', 'Fees vary by segment: Project Showcasing: BDT 2,000 for 1–4 members, +BDT 500 per additional member. Line Following Robot: BDT 2,000 for 1–4 members, +BDT 500 per additional member. Robo Soccer: BDT 2,000 for 1–4 members, +BDT 500 per additional member. Techathon Round 1: BDT 100/team (Grand Finale: BDT 2,400 for qualified teams). Poster Presentation: BDT 400/member (team of 3–4 members).', 3, 1),
 ('What is the registration deadline?', 'The registration deadline for FASTROBOX 1.0 is 20 October 2026. No late registrations will be accepted. Registration opens on 7 September 2026.', 4, 1),
-('When and where is the event?', 'FASTROBOX 1.0 will be held on 14 November 2026 at BUBT Campus, Rupnagar R/A, Mirpur-2, Dhaka-1216, Bangladesh. Organized by the IEEE Students'' Branch.', 5, 1),
+('When and where is the event?', 'FASTROBOX 1.0 will be held on 14 November 2026 at BUBT Campus, Rupnagar R/A, Mirpur-2, Dhaka-1216, Bangladesh. Organized by the IEEE BUBT Student Branch.', 5, 1),
 ('Can team members be from different universities?', 'For Techathon, cross-university teams are explicitly allowed. For other segments, check the specific eligibility rules. Generally, students from different institutions within the same level (school/college/university) may form teams.', 6, 1),
 ('How does registration and payment work?', 'Complete your registration online through this website in 6 steps: select competition, enter team info, add leader details, add members, submit payment, and review. After submitting, you receive a unique Registration ID. Pay the registration fee via bKash or Nagad, upload the payment screenshot, and our admin team will verify within 24–48 hours.', 7, 1),
 ('Can I participate in multiple competitions?', 'You may register for multiple competitions separately. However, if event timings overlap on the competition day, you may not be able to participate in both simultaneously. Plan accordingly.', 8, 1),
@@ -423,10 +423,10 @@ ON DUPLICATE KEY UPDATE `question` = VALUES(`question`), `answer` = VALUES(`answ
 -- ================================================================
 INSERT INTO `notices` (`title`, `description`, `category_id`, `is_published`) VALUES
 ('FASTROBOX 1.0 Registration Now Open!',
- 'We are thrilled to announce that registration for FASTROBOX 1.0 — the National Robotics & Tech Carnival organized by IEEE Students'' Branch at BUBT — is now officially open! Five exciting competitions await: Project Showcasing (Junior & Senior), Line Following Robot, Robo Soccer, Techathon (IoT Hackathon), and Poster Presentation. Registration is open from 7 September 2026 to 20 October 2026. Visit the registration page to secure your spot!',
+ 'We are thrilled to announce that registration for FASTROBOX 1.0 — the National Robotics & Tech Carnival organized by IEEE BUBT Student Branch — is now officially open! Five exciting competitions await: Project Showcasing (Junior & Senior), Line Following Robot, Robo Soccer, Techathon (IoT Hackathon), and Poster Presentation. Registration is open from 7 September 2026 to 20 October 2026. Visit the registration page to secure your spot!',
  2, 1),
 ('Welcome to FASTROBOX 1.0',
- 'The IEEE Students'' Branch at Bangladesh University of Business and Technology (BUBT) proudly presents FASTROBOX 1.0 — the National Robotics & Tech Carnival! This national-level event brings together Bangladesh''s brightest engineering minds to compete, innovate, and inspire. The event will be held on 14 November 2026 at BUBT Campus, Mirpur, Dhaka. Prize pool of BDT 200K+ across five competition categories.',
+ 'The IEEE BUBT Student Branch proudly presents FASTROBOX 1.0 — the National Robotics & Tech Carnival! This national-level event brings together Bangladesh''s brightest engineering minds to compete, innovate, and inspire. The event will be held on 14 November 2026 at BUBT Campus, Mirpur, Dhaka. Prize pool of BDT 200K+ across five competition categories.',
  1, 1),
 ('Payment Information — To Be Announced',
  'Payment details for registration fees (bKash/Nagad numbers) will be announced through official channels shortly. Please check this notice board regularly for updates. Once payment information is posted, complete your payment and upload the screenshot to your registration portal using your Registration ID as the reference.',
