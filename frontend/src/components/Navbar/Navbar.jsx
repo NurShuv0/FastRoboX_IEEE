@@ -21,6 +21,9 @@ export default function Navbar() {
   const [audioOn, setAudioOn] = useState(false);
   const location = useLocation();
 
+  const audioRef = React.useRef(null);
+  const synthCtxRef = React.useRef(null);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
@@ -42,6 +45,60 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
 
+  const startSynth = () => {
+    try {
+      if (!synthCtxRef.current) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(110, ctx.currentTime);
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(164.81, ctx.currentTime);
+
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc1.start();
+        osc2.start();
+
+        synthCtxRef.current = { ctx, osc1, osc2, gain };
+      }
+    } catch {}
+  };
+
+  const stopSynth = () => {
+    if (synthCtxRef.current) {
+      try { synthCtxRef.current.ctx.close(); } catch {}
+      synthCtxRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    if (audioOn) {
+      if (audioRef.current) {
+        audioRef.current.play().then(() => {
+          stopSynth();
+        }).catch(() => {
+          startSynth();
+        });
+      } else {
+        startSynth();
+      }
+    } else {
+      if (audioRef.current) audioRef.current.pause();
+      stopSynth();
+    }
+    return () => stopSynth();
+  }, [audioOn]);
+
   const isActive = (to) => {
     if (to === '/') return location.pathname === '/';
     return location.pathname.startsWith(to);
@@ -49,6 +106,7 @@ export default function Navbar() {
 
   return (
     <>
+      <audio ref={audioRef} loop src="/audio/bg_music.mp3" preload="auto" />
       <nav
         style={{
           position: 'fixed',
