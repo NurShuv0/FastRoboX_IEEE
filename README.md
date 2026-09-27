@@ -262,12 +262,14 @@ Expected output:
 
 ### Step 7 — Open the App
 
-| URL | Description |
-| :--- | :--- |
-| **`http://localhost:5173`** | 🌐 Public-facing website |
-| **`http://localhost:5173/admin/login`** | 🔐 Admin login page |
-| **`http://localhost/fastrobox/backend/api/notices`** | 🔌 Backend API health check |
-| **`http://localhost/phpmyadmin`** | 🗄️ Database management |
+| Environment | URL | Description |
+| :--- | :--- | :--- |
+| **Live Production** | [http://fast-robox.site.je](http://fast-robox.site.je) | 🌐 Official Live Website (InfinityFree) |
+| **Live Admin Portal** | [http://fast-robox.site.je/admin/login](http://fast-robox.site.je/admin/login) | 🔐 Live Admin Management Panel |
+| **Live API Health Check** | [http://fast-robox.site.je/api/notices](http://fast-robox.site.je/api/notices) | 🔌 Live Backend REST API |
+| **Local Frontend** | `http://localhost:5173` | 💻 Local Vite Dev Server |
+| **Local Admin Portal** | `http://localhost:5173/admin/login` | 🔐 Local Admin Login |
+| **Local API Check** | `http://localhost/fastrobox/backend/api/notices` | 🔌 Local Backend API (XAMPP) |
 
 ---
 
@@ -277,14 +279,33 @@ Use the following credentials to access the Admin Management Panel:
 
 | Attribute | Detail |
 | :--- | :--- |
-| **Login Portal URL** | [http://localhost:5173/admin/login](http://localhost:5173/admin/login) |
-| **Admin Email** | `admin@fastrobox.bubt.edu.bd` |
-| **Password** | `Admin@123` |
+| **Live Admin Login URL** | [http://fast-robox.site.je/admin/login](http://fast-robox.site.je/admin/login) |
+| **Local Admin Login URL** | [http://localhost:5173/admin/login](http://localhost:5173/admin/login) |
+| **Admin Email (Username)** | `admin@fastrobox.bubt.edu.bd` |
+| **Password** | `Nur@1234` |
 
-> **Forgot or changed your password?** Run the reset utility:
+> **Need to change or reset the admin password?** Run the reset utility from command line:
 > ```bash
-> php database/reset_admin.php
+> php database/reset_admin.php "admin@fastrobox.bubt.edu.bd" "YourNewPassword"
 > ```
+> *Note: This automatically updates both local and InfinityFree live database credentials!*
+
+---
+
+## 🌐 Live InfinityFree Free Hosting Setup
+
+The project is optimized for deployment on **InfinityFree** free hosting:
+
+### Deployment ZIP Packages Generated:
+- **`backend.zip`** (~5.88 MB) — Complete PHP REST API backend
+- **`frontend_dist.zip`** (~7.10 MB) — Compiled React SPA + `.htaccess` routing
+- **`audio.zip`** (~3.70 MB) — Audio media assets
+
+### Deployment Instructions (InfinityFree `htdocs`):
+1. Extract **`backend.zip`** into `htdocs` (creates `htdocs/backend/`).
+2. Extract **`frontend_dist.zip`** into `htdocs` (puts `index.html`, `assets/`, `.htaccess` into `htdocs`).
+3. Extract **`audio.zip`** into `htdocs` (creates `htdocs/audio/`).
+4. Ensure `.htaccess` is present in `htdocs` for React SPA client routing.
 
 ---
 
