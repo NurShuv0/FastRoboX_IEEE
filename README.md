@@ -264,9 +264,9 @@ Expected output:
 
 | Environment | URL | Description |
 | :--- | :--- | :--- |
-| **Live Production** | [http://fast-robox.site.je](http://fast-robox.site.je) | 🌐 Official Live Website (InfinityFree) |
-| **Live Admin Portal** | [http://fast-robox.site.je/admin/login](http://fast-robox.site.je/admin/login) | 🔐 Live Admin Management Panel |
-| **Live API Health Check** | [http://fast-robox.site.je/api/notices](http://fast-robox.site.je/api/notices) | 🔌 Live Backend REST API |
+| **Live Production** | [https://ieee.great-site.net](https://ieee.great-site.net) | 🌐 Official Live Website (InfinityFree) |
+| **Live Admin Portal** | [https://ieee.great-site.net/admin/login](https://ieee.great-site.net/admin/login) | 🔐 Live Admin Management Panel |
+| **Live API Health Check** | [https://ieee.great-site.net/api/notices](https://ieee.great-site.net/api/notices) | 🔌 Live Backend REST API |
 | **Local Frontend** | `http://localhost:5173` | 💻 Local Vite Dev Server |
 | **Local Admin Portal** | `http://localhost:5173/admin/login` | 🔐 Local Admin Login |
 | **Local API Check** | `http://localhost/fastrobox/backend/api/notices` | 🔌 Local Backend API (XAMPP) |
@@ -279,7 +279,7 @@ Use the following credentials to access the Admin Management Panel:
 
 | Attribute | Detail |
 | :--- | :--- |
-| **Live Admin Login URL** | [http://fast-robox.site.je/admin/login](http://fast-robox.site.je/admin/login) |
+| **Live Admin Login URL** | [https://ieee.great-site.net/admin/login](https://ieee.great-site.net/admin/login) |
 | **Local Admin Login URL** | [http://localhost:5173/admin/login](http://localhost:5173/admin/login) |
 | **Admin Email (Username)** | `admin@fastrobox.bubt.edu.bd` |
 | **Password** | `Nur@1234` |
