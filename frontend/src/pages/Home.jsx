@@ -74,9 +74,22 @@ function Countdown({ targetDate, label = 'Event starts in' }) {
 }
 
 // ── SEGMENT CARD ────────────────────────────────────────────────
+const GOOGLE_FORM_FALLBACKS = {
+  'lfr': 'https://forms.gle/TrhrrxYyuEXNjNd69',
+  'line-follower': 'https://forms.gle/TrhrrxYyuEXNjNd69',
+  'line-follower-robot': 'https://forms.gle/TrhrrxYyuEXNjNd69',
+  'robo-soccer': 'https://forms.gle/SMuDtgRnvGTMQTwG8',
+  'project-showcase-senior': 'https://forms.gle/7spkXASp9ELPk4rm6',
+  'project-showcase-junior': 'https://forms.gle/hKpZsvudbqxQgugY8',
+  'project-showcase': 'https://forms.gle/7spkXASp9ELPk4rm6',
+  'poster-presentation': 'https://forms.gle/RBBnkdgxaZxUvjo1A',
+};
+
 function SegmentCard({ seg, index }) {
   const theme = getSegmentColor(seg.name);
   const { isDark } = useTheme();
+
+  const formUrl = seg.google_form_url || GOOGLE_FORM_FALLBACKS[seg.slug] || 'https://forms.gle/TrhrrxYyuEXNjNd69';
 
   return (
     <motion.div
@@ -157,8 +170,10 @@ function SegmentCard({ seg, index }) {
         </div>
 
         {/* Full Width Clean Action Button */}
-        <Link
-          to={`/register?segment=${seg.id}`}
+        <a
+          href={formUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           className="btn btn-pill"
           style={{
             width: '100%',
@@ -172,10 +187,11 @@ function SegmentCard({ seg, index }) {
             letterSpacing: '0.06em',
             padding: '10px 20px',
             marginTop: 'auto',
+            textDecoration: 'none',
           }}
         >
-          REGISTER NOW <ArrowRight size={14} style={{ marginLeft: 6 }} />
-        </Link>
+          REGISTER NOW <ExternalLink size={14} style={{ marginLeft: 6 }} />
+        </a>
       </div>
     </motion.div>
   );
