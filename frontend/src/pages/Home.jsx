@@ -4,7 +4,8 @@ import { motion, useInView } from 'framer-motion';
 import {
   Zap, ChevronRight, Trophy, Users, Building2, ArrowRight,
   Calendar, Clock, Bot, Cpu, Rocket, ChevronDown,
-  Radio, Star, Handshake, MessageSquare, ExternalLink, Flame
+  Radio, Star, Handshake, MessageSquare, ExternalLink, Flame,
+  Crown, Award, Landmark, GraduationCap, Briefcase
 } from 'lucide-react';
 import { getSegments, getSponsors } from '../services/api';
 import { useSettings } from '../context/SettingsContext';
@@ -197,6 +198,284 @@ function SegmentCard({ seg, index }) {
   );
 }
 
+// ── GUEST LIST & KEYNOTE SPEAKERS ─────────────────────────────────
+const GUEST_DATA = {
+  chiefGuest: {
+    name: 'Bobby Hajjaj, MP',
+    role: 'Honʼble State Minister',
+    institution: 'Ministry of Primary and Mass Education, Government of the Peopleʼs Republic of Bangladesh',
+    category: 'Chief Guest',
+    image: '/images/speakers/bobby_hajjaj.jpg',
+  },
+  academicGuests: [
+    {
+      name: 'Prof. Dr. Ahmed Wasif Reza',
+      role: 'Dean, Faculty of Sciences & Engineering',
+      institution: 'East West University',
+      category: 'Guests of Honour & Academic',
+      confirmed: true,
+      image: '/images/speakers/wasif_reza.png',
+    },
+    {
+      name: 'Ariful Hasan Opu',
+      role: 'President',
+      institution: 'Space Innovation Camp',
+      category: 'Guests of Honour & Academic',
+      confirmed: false,
+      image: '/images/speakers/ariful_opu.png',
+    },
+  ],
+  industryGuests: [
+    {
+      name: 'Fahim Mashroor',
+      role: 'Co-Founder & CEO, Bdjobs.com',
+      institution: 'Co-Founder, AjkerDeal',
+      category: 'Industry & Corporate',
+      confirmed: true,
+      image: '/images/speakers/fahim_mashroor.png',
+    },
+    {
+      name: 'Sadia Haque',
+      role: 'Co-Founder & CEO',
+      institution: 'ShareTrip',
+      category: 'Industry & Corporate',
+      confirmed: true,
+      image: '/images/speakers/sadia_haque.png',
+    },
+  ],
+};
+
+function SpeakersSection() {
+  const { isDark } = useTheme();
+
+  return (
+    <section id="speakers" style={{ padding: '48px 24px', position: 'relative', zIndex: 1 }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <SectionHeader
+          tag="DISTINGUISHED DIGNITARIES"
+          title="GUEST LIST & KEYNOTE SPEAKERS"
+          subtitle="Honoring eminent leaders, visionary academics, and corporate pioneers inspiring FastRoboX 1.0."
+        />
+
+        {/* ── CHIEF GUEST FEATURED HERO CARD ────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
+          className="glass-card"
+          style={{
+            borderRadius: 20,
+            padding: '1.25rem 1.75rem',
+            marginBottom: '1.75rem',
+            background: isDark
+              ? 'linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(15, 23, 42, 0.85) 100%)'
+              : 'linear-gradient(135deg, rgba(254, 242, 242, 0.9) 0%, rgba(255, 255, 255, 0.95) 100%)',
+            borderColor: isDark ? 'rgba(220, 38, 38, 0.25)' : 'rgba(220, 38, 38, 0.2)',
+            boxShadow: isDark ? '0 10px 30px rgba(0, 0, 0, 0.3), 0 0 20px rgba(220, 38, 38, 0.08)' : '0 10px 25px rgba(220, 38, 38, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 24,
+            flexWrap: 'wrap',
+          }}
+        >
+          {/* Speaker Portrait */}
+          <div style={{ position: 'relative', width: 100, height: 100, flexShrink: 0, margin: '0 auto' }}>
+            <img
+              src={GUEST_DATA.chiefGuest.image}
+              alt={GUEST_DATA.chiefGuest.name}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '50%',
+                border: '2.5px solid #dc2626',
+                boxShadow: '0 0 20px rgba(220, 38, 38, 0.3)',
+              }}
+            />
+            <div style={{
+              position: 'absolute', bottom: -4, left: '50%', transform: 'translateX(-50%)',
+              background: '#dc2626', color: '#fff', fontSize: '0.58rem', fontWeight: 900,
+              padding: '2px 8px', borderRadius: 100, textTransform: 'uppercase', letterSpacing: '0.08em',
+              whiteSpace: 'nowrap', boxShadow: '0 2px 6px rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', gap: 3
+            }}>
+              <Crown size={11} /> CHIEF GUEST
+            </div>
+          </div>
+
+          {/* Details */}
+          <div style={{ flex: 1, minWidth: 260, textAlign: 'left' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+              <span style={{
+                fontSize: '0.68rem', fontWeight: 800, padding: '3px 10px', borderRadius: 100,
+                background: isDark ? 'rgba(220, 38, 38, 0.12)' : 'rgba(254, 226, 226, 0.8)',
+                color: isDark ? '#fca5a5' : '#b91c1c',
+                border: '1px solid rgba(220, 38, 38, 0.25)',
+                textTransform: 'uppercase', letterSpacing: '0.08em', display: 'inline-flex', alignItems: 'center', gap: 4
+              }}>
+                <Landmark size={11} /> Government of Bangladesh
+              </span>
+            </div>
+
+            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.35rem, 2.5vw, 1.75rem)', fontWeight: 900, color: 'var(--text-primary)', margin: '0 0 4px', lineHeight: 1.25 }}>
+              {GUEST_DATA.chiefGuest.name}
+            </h3>
+
+            <div style={{ fontSize: '0.92rem', fontWeight: 800, color: isDark ? '#f87171' : '#dc2626', marginBottom: 4 }}>
+              {GUEST_DATA.chiefGuest.role}
+            </div>
+
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.84rem', margin: 0, lineHeight: 1.55 }}>
+              {GUEST_DATA.chiefGuest.institution}
+            </p>
+          </div>
+        </motion.div>
+
+        {/* ── GUESTS OF HONOUR & DISTINGUISHED ACADEMIC GUESTS ──── */}
+        <div style={{ marginBottom: '1.75rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1rem' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(34, 197, 94, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#34d399' }}>
+              <GraduationCap size={18} />
+            </div>
+            <div>
+              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                Guests of Honour &amp; Distinguished Academic Guests
+              </h4>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+            {GUEST_DATA.academicGuests.map((sp, i) => (
+              <motion.div
+                key={sp.name}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: i * 0.08 }}
+                whileHover={{ y: -4, boxShadow: '0 0 25px rgba(34, 197, 94, 0.18)' }}
+                className="glass-card"
+                style={{
+                  padding: '1rem 1.25rem',
+                  borderRadius: 16,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 14,
+                  borderColor: 'rgba(34, 197, 94, 0.2)',
+                }}
+              >
+                <img
+                  src={sp.image}
+                  alt={sp.name}
+                  style={{
+                    width: 60, height: 60, borderRadius: 14, objectFit: 'cover',
+                    border: '2px solid rgba(34, 197, 94, 0.35)', flexShrink: 0
+                  }}
+                />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#34d399', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      Academic Guest
+                    </span>
+                    {sp.confirmed && (
+                      <span style={{
+                        fontSize: '0.6rem', fontWeight: 800, padding: '2px 7px', borderRadius: 100,
+                        background: 'rgba(34, 197, 94, 0.15)', color: '#34d399', border: '1px solid rgba(34, 197, 94, 0.3)',
+                        display: 'inline-flex', alignItems: 'center', gap: 3
+                      }}>
+                        <span className="animate-blink" style={{ width: 5, height: 5, borderRadius: '50%', background: '#34d399' }} /> Confirmed
+                      </span>
+                    )}
+                  </div>
+                  <h5 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {sp.name}
+                  </h5>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: 1 }}>
+                    {sp.role}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    {sp.institution}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── INDUSTRY & CORPORATE GUESTS ────────────────────────── */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1rem' }}>
+            <div style={{ width: 32, height: 32, borderRadius: 8, background: 'rgba(245, 158, 11, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fbbf24' }}>
+              <Briefcase size={18} />
+            </div>
+            <div>
+              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.08rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                Industry &amp; Corporate Guests
+              </h4>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+            {GUEST_DATA.industryGuests.map((sp, i) => (
+              <motion.div
+                key={sp.name}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: i * 0.08 }}
+                whileHover={{ y: -4, boxShadow: '0 0 25px rgba(245, 158, 11, 0.18)' }}
+                className="glass-card"
+                style={{
+                  padding: '1rem 1.25rem',
+                  borderRadius: 16,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 14,
+                  borderColor: 'rgba(245, 158, 11, 0.22)',
+                }}
+              >
+                <img
+                  src={sp.image}
+                  alt={sp.name}
+                  style={{
+                    width: 60, height: 60, borderRadius: 14, objectFit: 'cover',
+                    border: '2px solid rgba(245, 158, 11, 0.35)', flexShrink: 0
+                  }}
+                />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+                    <span style={{ fontSize: '0.62rem', fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      Industry Leader
+                    </span>
+                    {sp.confirmed && (
+                      <span style={{
+                        fontSize: '0.6rem', fontWeight: 800, padding: '2px 7px', borderRadius: 100,
+                        background: 'rgba(34, 197, 94, 0.15)', color: '#34d399', border: '1px solid rgba(34, 197, 94, 0.3)',
+                        display: 'inline-flex', alignItems: 'center', gap: 3
+                      }}>
+                        <span className="animate-blink" style={{ width: 5, height: 5, borderRadius: '50%', background: '#34d399' }} /> Confirmed
+                      </span>
+                    )}
+                  </div>
+                  <h5 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {sp.name}
+                  </h5>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: 1 }}>
+                    {sp.role}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    {sp.institution}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
 // ── HOME PAGE ────────────────────────────────────────────────────
 export default function Home() {
   const [segments, setSegments] = useState([]);
@@ -267,20 +546,20 @@ export default function Home() {
           <div className="marquee-container">
             <div className="marquee-track" style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
               <span style={{ paddingRight: 40 }}>
-                🏆 <strong>REGISTRATION OPEN:</strong> FastRoboX 1.0 — BUBT National Robotics Competition | Prize Pool: <strong>BDT 200,000+</strong>
+                🏆 <strong>REGISTRATION OPEN:</strong> FastRoboX 1.0 — BUBT National Robotics Competition | Prize Pool: <strong>BDT 250,000+</strong>
               </span>
               <span style={{ paddingRight: 40 }}>
-                ⚡ <strong>5 COMPETE SEGMENTS:</strong> Robo Soccer, Line Follower Robot, Techathon Hackathon, Project Showcase &amp; Poster Presentation
+                ⚡ <strong>10 COMPETE SEGMENTS:</strong> Robo Soccer, Line Follower Robot, Techathon Hackathon, Project Showcase &amp; Poster Presentation etc.
               </span>
               <span style={{ paddingRight: 40 }}>
                 📜 <strong>CERTIFICATES:</strong> Official participation certificates will be awarded to all verified teams.
               </span>
               {/* Duplicated for 100% seamless infinite running loop */}
               <span style={{ paddingRight: 40 }}>
-                🏆 <strong>REGISTRATION OPEN:</strong> FastRoboX 1.0 — BUBT National Robotics Competition | Prize Pool: <strong>BDT 200,000+</strong>
+                🏆 <strong>REGISTRATION OPEN:</strong> FastRoboX 1.0 — BUBT National Robotics Competition | Prize Pool: <strong>BDT 250,000+</strong>
               </span>
               <span style={{ paddingRight: 40 }}>
-                ⚡ <strong>5 COMPETE SEGMENTS:</strong> Robo Soccer, Line Follower Robot, Techathon Hackathon, Project Showcase &amp; Poster Presentation
+                ⚡ <strong>10 COMPETE SEGMENTS:</strong> Robo Soccer, Line Follower Robot, Techathon Hackathon, Project Showcase &amp; Poster Presentation
               </span>
               <span style={{ paddingRight: 40 }}>
                 📜 <strong>CERTIFICATES:</strong> Official participation certificates will be awarded to all verified teams.
@@ -380,7 +659,7 @@ export default function Home() {
               </div>
               <div style={{ textAlign: 'left' }}>
                 <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', fontWeight: 700 }}>TOTAL PRIZE POOL</div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626' }}>2,00,000+ BDT</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626' }}>2,50,000+ BDT</div>
               </div>
             </div>
           </motion.div>
@@ -501,6 +780,9 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* ── GUEST LIST & KEYNOTE SPEAKERS ───────────────────────── */}
+      <SpeakersSection />
 
       {/* ── HOST INSTITUTION ──────────────────────────────────── */}
       <section style={{ padding: '80px 24px', position: 'relative', zIndex: 1 }}>

@@ -23,7 +23,7 @@ define('JWT_EXPIRY', 86400); // 24 hours
 define('UPLOAD_DIR', __DIR__ . '/../uploads/');
 define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB
 define('ALLOWED_IMAGE_TYPES', ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
-define('ALLOWED_PDF_TYPES', ['application/pdf']);
+define('ALLOWED_PDF_TYPES', ['application/pdf', 'application/x-pdf', 'application/acrobat', 'applications/vnd.pdf', 'text/pdf', 'text/x-pdf', 'application/octet-stream']);
 
 function getDB(): PDO {
     static $pdo = null;
