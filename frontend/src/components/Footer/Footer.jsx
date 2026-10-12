@@ -264,7 +264,7 @@ export default function Footer() {
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
             © 2026 FASTROBOX 1.0. All Rights Reserved. — Organized by {organizer}
           </p>
-          <div style={{ display: 'flex', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <Link to="/notice" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textDecoration: 'none', transition: 'color 0.2s' }}
               onMouseEnter={e => e.currentTarget.style.color = 'var(--color-primary)'}
               onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
@@ -275,6 +275,44 @@ export default function Footer() {
               onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>
               Check Registration Status
             </Link>
+
+            {/* Developed By Badge */}
+            <a
+              href="https://nur-shuvo-islive.netlify.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Visit Developer Portfolio"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                padding: '3px 10px 3px 8px',
+                borderRadius: 20,
+                border: '1px solid var(--border-color)',
+                background: 'var(--bg-card)',
+                textDecoration: 'none',
+                fontSize: '0.72rem',
+                color: 'var(--text-muted)',
+                fontFamily: 'var(--font-heading)',
+                letterSpacing: '0.02em',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = 'var(--color-primary)';
+                e.currentTarget.style.color = 'var(--color-primary)';
+                e.currentTarget.style.boxShadow = '0 0 10px rgba(220,38,38,0.25)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'var(--border-color)';
+                e.currentTarget.style.color = 'var(--text-muted)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <img src="https://img.icons8.com/?size=100&id=123916&format=png&color=000000" alt="" style={{ width: 14, height: 14, opacity: 0.65, display: 'block' }} />
+              <span style={{ opacity: 0.6, fontWeight: 400 }}>Developed by</span>
+              <strong style={{ fontWeight: 700 }}>Nur Shuvo</strong>
+            </a>
           </div>
         </div>
       </div>

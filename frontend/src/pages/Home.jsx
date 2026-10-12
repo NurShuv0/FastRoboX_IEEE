@@ -5,12 +5,14 @@ import {
   Zap, ChevronRight, Trophy, Users, Building2, ArrowRight,
   Calendar, Clock, Bot, Cpu, Rocket, ChevronDown,
   Radio, Star, Handshake, MessageSquare, ExternalLink, Flame,
-  Crown, Award, Landmark, GraduationCap, Briefcase
+  Crown, Award, Landmark, GraduationCap, Briefcase, BookOpen
 } from 'lucide-react';
 import { getSegments, getSponsors } from '../services/api';
 import { useSettings } from '../context/SettingsContext';
 import { useTheme } from '../context/ThemeContext';
 import { SectionHeader, Loader, EmptyState } from '../components/UI/index.jsx';
+import CircularCountdown from '../components/Home/CircularCountdown';
+import CompetitionSchedule from '../components/Home/CompetitionSchedule';
 
 // Segment theme color mapping matching NRF26
 const getSegmentColor = (name = '') => {
@@ -21,58 +23,6 @@ const getSegmentColor = (name = '') => {
   if (lower.includes('poster')) return { bg: '#d97706', tagBg: 'rgba(217,119,6,0.15)', text: '#fbbf24', border: 'rgba(217,119,6,0.3)' };
   return { bg: '#dc2626', tagBg: 'rgba(220,38,38,0.15)', text: '#fca5a5', border: 'rgba(220,38,38,0.3)' };
 };
-
-// ── COUNTDOWN ────────────────────────────────────────────────────
-function Countdown({ targetDate, label = 'Event starts in' }) {
-  const calcTime = () => {
-    const diff = new Date(targetDate).getTime() - Date.now();
-    if (diff <= 0) return null;
-    return {
-      d: Math.floor(diff / 86400000),
-      h: Math.floor((diff % 86400000) / 3600000),
-      m: Math.floor((diff % 3600000) / 60000),
-      s: Math.floor((diff % 60000) / 1000),
-    };
-  };
-
-  const [time, setTime] = useState(calcTime());
-
-  useEffect(() => {
-    const id = setInterval(() => setTime(calcTime()), 1000);
-    return () => clearInterval(id);
-  }, [targetDate]);
-
-  if (!time) {
-    return (
-      <div style={{ textAlign: 'center', padding: '12px', color: '#dc2626', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-        🚩 EVENT SUCCESSFULLY COMPLETED!
-      </div>
-    );
-  }
-
-  const boxes = [
-    { val: time.d, label: 'Days' },
-    { val: time.h, label: 'Hours' },
-    { val: time.m, label: 'Mins' },
-    { val: time.s, label: 'Secs' },
-  ];
-
-  return (
-    <div>
-      <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 10, textAlign: 'center', fontWeight: 700 }}>
-        {label}
-      </div>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
-        {boxes.map(({ val, label: l }) => (
-          <div key={l} className="countdown-box" style={{ borderRadius: 16, borderColor: 'rgba(220, 38, 38, 0.25)', minWidth: 85 }}>
-            <div className="countdown-number" style={{ color: '#dc2626' }}>{String(val).padStart(2, '0')}</div>
-            <div className="countdown-label">{l}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // ── SEGMENT CARD ────────────────────────────────────────────────
 const GOOGLE_FORM_FALLBACKS = {
@@ -646,8 +596,8 @@ export default function Home() {
                 <Calendar size={18} />
               </div>
               <div style={{ textAlign: 'left' }}>
-                <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', fontWeight: 700 }}>EVENT DATE</div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>14 November, 2026</div>
+                <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', fontWeight: 700 }}>EVENT DATES</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>13–14 November, 2026</div>
               </div>
             </div>
 
@@ -662,6 +612,18 @@ export default function Home() {
                 <div style={{ fontSize: '0.9rem', fontWeight: 900, color: '#dc2626' }}>2,50,000+ BDT</div>
               </div>
             </div>
+          </motion.div>
+
+          {/* Circular Countdown Timer (November 13, 2026 at 12:00 AM BST) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.45 }}
+          >
+            <CircularCountdown
+              targetTimestamp="2026-11-13T00:00:00+06:00"
+              title="Competition Starts In"
+            />
           </motion.div>
 
           {/* Registration Deadline Pill Card */}
@@ -703,6 +665,14 @@ export default function Home() {
             <Link to="/segments" className="btn btn-outline btn-xl btn-pill">
               EXPLORE SEGMENTS <ChevronRight size={16} />
             </Link>
+            <a
+              href="https://drive.google.com/drive/u/0/folders/1HWIb7bP09p0Rc3WvyU8cvmnMeZk-XBdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-outline btn-xl btn-pill btn-rulebooks"
+            >
+              <BookOpen size={18} /> EXPLORE RULEBOOKS <ExternalLink size={14} style={{ opacity: 0.8 }} />
+            </a>
           </motion.div>
 
         </div>
@@ -754,8 +724,6 @@ export default function Home() {
         </div>
       </section>
 
-
-
       {/* ── COMPETITION SEGMENTS ──────────────────────────────── */}
       <section id="segments" style={{ padding: '80px 24px', position: 'relative', zIndex: 1 }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
@@ -780,6 +748,9 @@ export default function Home() {
           )}
         </div>
       </section>
+
+      {/* ── 2-DAY COMPETITION SCHEDULE ────────────────────────── */}
+      <CompetitionSchedule />
 
       {/* ── GUEST LIST & KEYNOTE SPEAKERS ───────────────────────── */}
       <SpeakersSection />

@@ -47,7 +47,7 @@ export default function Timeline() {
         <SectionHeader
           tag="Event Schedule"
           title="FASTROBOX 1.0 Timeline"
-          subtitle="Key dates and milestones. Registration opens 7 September 2026 and closes 20 October 2026. The event is on 14 November 2026 at BUBT."
+          subtitle="Key dates and milestones. Registration opens 7 September 2026 and closes 20 October 2026. The event is on 13–14 November 2026 at BUBT."
         />
 
         {loading ? (

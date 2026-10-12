@@ -137,7 +137,7 @@ export default function Contact() {
               </div>
               {[
                 ['Event', 'FASTROBOX 1.0'],
-                ['Date', '14 November 2026'],
+                ['Date', '13–14 November 2026'],
                 ['Venue', 'BUBT Campus, Mirpur, Dhaka'],
                 ['Registration Deadline', '20 October 2026'],
               ].map(([k, v]) => (

@@ -291,6 +291,31 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(220, 38, 38, 0.3);
 }
 
+.btn-rulebooks {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.38) !important;
+  color: #fbbf24 !important;
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.12);
+  transition: all var(--transition-base);
+}
+.btn-rulebooks:hover {
+  background: rgba(245, 158, 11, 0.18) !important;
+  border-color: #f59e0b !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.4) !important;
+  transform: translateY(-2px);
+}
+[data-theme="light"] .btn-rulebooks {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(217, 119, 6, 0.4) !important;
+  color: #b45309 !important;
+}
+[data-theme="light"] .btn-rulebooks:hover {
+  background: rgba(245, 158, 11, 0.2) !important;
+  border-color: #d97706 !important;
+  color: #78350f !important;
+}
+
 .btn-pill { border-radius: 9999px !important; }
 
 .btn-sm { padding: 6px 18px; font-size: 0.8rem; }
